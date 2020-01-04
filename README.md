@@ -17,7 +17,7 @@ Using these heatmaps, drivers can decide where/when they want to work in order t
 ## What technical decisions did you make? Why?
 - React frontend: fast prototyping, familiarity allowed me to focus on business logic
 - Node backend: fast prototyping, familiarity allowed me to focus on business logic
-- PostgreSQL database: open-source database common in startups. I would like tobuild my own startup or work at a startup, so this choice increases my value in either scenario
+- PostgreSQL database: open-source database common in startups. I would like to build my own startup or work at a startup, so this choice increases my value in either scenario
 - TDD: I hope to add more features to gigMax, and TDD will help make my codebase extensible by reducing risk of breaking changes. The tradeoff is more initial time to build, which I think was worth it.
 
 ## What tech stack did you use? Why?
