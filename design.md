@@ -3,16 +3,17 @@
 - dashboard with hourly rate and total earnings over time
 
 # Frontend
-- login screen to keep data private
 - trips/hour and amount/trip heatmap buttons
+- login screen to keep data private
 - dashboard page: Total Income graph, Hourly Rate graph
 
 # Backend
+- heatmaps
+  - uber driver web app scraper
+  - google location data fetcher
+  - logic that combines the two into single source of truth
+  - database logic to filter visualizations by location/time
 - user authentication
-- uber driver web app scraper
-- google location data fetcher
-- logic that combines the two into single source of truth
-- database logic to filter visualizations by location/time
 
 # Data Needed
 - uber eats trip data
