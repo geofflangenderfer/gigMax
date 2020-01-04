@@ -1,5 +1,5 @@
 # Features
-- # trips/hour and $ amount/trip heat maps that help a user choose where/when to work in order to maximize hourly rate
+- \# trips/hour and $ amount/trip heat maps that help a user choose where/when to work in order to maximize hourly rate
 - dashboard with hourly rate and total earnings over time
 
 # Frontend
