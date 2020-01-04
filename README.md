@@ -5,7 +5,7 @@ gigMax helps Uber Eats delivery drivers maximize their hourly rate by using thei
 - \# deliveries/hour heatmap filterable by time of day/day of week  
 
 ## What problem does it solve?
-Using these heatmaps, drivers can decide where/when they want to work in order to maximize their hourly rate. Anecdotally, I've earned earned between $10-$20/hour, so there is large variability in earnings and a chance to provide a significant impact to drivers bottom-line:
+Using these heatmaps, drivers can decide where/when they want to work in order to maximize their hourly rate. Anecdotally, I've earned earned between $10-$20/hour, so there is large variability in earnings and a chance to provide a significant impact to drivers' bottom-lines:
 
 - potential value provided = +$10/hours * 160 hours/month
 - if I charge $99/month, a full-time driver can potentially increase their earnings by $1,501/month
