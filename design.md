@@ -12,7 +12,7 @@
   - uber driver web app scraper
   - google location data fetcher
   - logic that combines the two into single source of truth
-  - database logic to filter visualizations by location/time
+  - database logic to filter visualizations by time of day/week
 - user authentication
 
 # Data Needed
