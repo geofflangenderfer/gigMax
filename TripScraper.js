@@ -4,7 +4,7 @@ const puppeteer = require('puppeteer');
   const browser = await puppeteer.launch({headless: false});
   const page = await browser.newPage();
   await page.goto('http://partners.uber.com');
-  await this.page.waitForFunction(() => {
+  await page.waitForFunction(() => {
     const url = document.location.hostname;
 
     return url == "partners.uber.com";
@@ -14,16 +14,15 @@ const puppeteer = require('puppeteer');
 })();
 
 
-async function getLoggedInPage(url) {
+async function getLoggedInPage() {
   const browser = await puppeteer.launch({headless: false});
   const page = await browser.newPage();
   await page.goto('http://partners.uber.com');
-  await this.page.waitForFunction(() => {
+  await page.waitForFunction(() => {
     const url = document.location.hostname;
 
     return url == "partners.uber.com";
   }, 0);
 
   return page;
-  
 }

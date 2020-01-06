@@ -11,6 +11,7 @@ Using these heatmaps, drivers can decide where/when they want to work in order t
 - if I charge $99/month, a full-time driver can potentially increase their earnings by $1,501/month
 
 ## What challenges did you face? Would you do anything different?
+- Uber Driver web app contains incomplete data. For example, if I completed 20 trips in a week, the app would give details for only 10 of them. My first thought was to scrap the project because this would further reduce the trip data sample size. I quickly reconsidered and decided to add a manual entry feature, where gigMax told you a week's data was incomplete then allowed you to upload the missing trips. Despite being cumbersome, I thought it would still be worth it for drivers when they compared it to their potential increased earnings of ~$1,500/month.
 
 ## What mistakes did you make? Would you do anything different?
 
