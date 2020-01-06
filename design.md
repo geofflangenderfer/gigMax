@@ -1,11 +1,12 @@
 # Features
-- \# trips/hour and $ amount/trip heat maps that help a user choose where/when to work in order to maximize hourly rate
 - dashboard with hourly rate and total earnings over time
+- \# trips/hour and $ amount/trip heat maps that help a user choose where/when to work in order to maximize hourly rate
+- google calendar integration that highlights open intervals and their potential hourly rates
 
 # Frontend
-- trips/hour and amount/trip heatmap buttons
 - login screen to keep data private
 - dashboard page: Total Income graph, Hourly Rate graph
+- trips/hour and amount/trip heatmap buttons
 
 # Backend
 - heatmaps
