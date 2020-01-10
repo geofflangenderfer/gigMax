@@ -1,20 +1,13 @@
 #!/usr/bin/env node
 const puppeteer = require('puppeteer');
-const fs = require('fs'); // write urls to file
+const fs = require('fs'); 
 
-//(async () => {
-//  const browser = await puppeteer.launch({headless: false});
-//  const page = await browser.newPage();
-//  await page.goto('http://partners.uber.com');
-//  await page.waitForFunction(() => {
-//    const url = document.location.hostname;
-//
-//    return url == "partners.uber.com";
-//  }, 0);
-//
-//  await browser.close();
-//})();
-
+const selectors = {
+  pickupTime: "#root > div > div > div > div > div.ae > div > div > div.c1.c2.c3 > div.al.cc.c5.cd.c7.ce.c9.cf.cb > div > div > div:nth-child(2) > div > div.by > div.dx.dy > div > div.e7 > div.dg > div.e8.cr.cn.co",
+  pickupLocation: "#root > div > div > div > div > div.ae > div > div > div.c1.c2.c3 > div.al.cc.c5.cd.c7.ce.c9.cf.cb > div > div > div:nth-child(2) > div > div.by > div.dx.dy > div > div.e7 > div.dg > div:nth-child(2)",
+  dropoffTime: "#root > div > div > div > div > div.ae > div > div > div.c1.c2.c3 > div.al.cc.c5.cd.c7.ce.c9.cf.cb > div > div > div:nth-child(2) > div > div.by > div.dx.dy > div > div.e7 > div:nth-child(2) > div.e8.cr.cn.co",
+  dropoffLocation: "#root > div > div > div > div > div.ae > div > div > div.c1.c2.c3 > div.al.cc.c5.cd.c7.ce.c9.cf.cb > div > div > div:nth-child(2) > div > div.by > div.dx.dy > div > div.e7 > div:nth-child(2) > div:nth-child(2)",
+};
 
 (async function main() {
   try {
@@ -25,17 +18,9 @@ const fs = require('fs'); // write urls to file
     const page = await getUserLoggedInPage(browser);
 
     const statementsURL = "https://drivers.uber.com/p3/payments/statements";
-    //await page._client.send(
-    //  'Page.setDownloadBehavior', 
-    //  {behavior: 'allow', downloadPath: './statements'}
-    //);
-    await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: './'});
-    await navigateTo(page, statementsURL);
-    //let statementURLs = await getAllStatementURLs(page);
+    await safelyNavigate(page, statementsURL);
     await clickDownloadCSVButtons(page);
-    page.on('dialog', async dialog => {
-    	console.log(dialog.accept());
-    });
+    //await saveTripHtmlContent(page);
 
     await browser.close();
 
@@ -44,10 +29,35 @@ const fs = require('fs'); // write urls to file
   }
 })();
 
+async function saveTripHtmlContent(page) {
+  const tripUrls = deriveTripUrls();
+  for (let url of tripUrls) {
+    await safelyNavigate(page, url);
+    var html = await page.content();
+    fs.writeFileSync(`./scrapedData/htmlTripData/${url}.html`, html);
+  }
+
+}
+
+//async function deriveTripUrls() {
+//  
+////https://stackoverflow.com/questions/24296325/how-to-safely-mix-sync-and-async-code
+//}
+
+//async function scrapeTripPage(page) {
+//  let locTimeData = await page.evaluate(selectors => {
+//    pickupTime: document.querySelector(selectors.pickupTime),
+//    pickupLocation: document.querySelector(selectors.pickupLocation),
+//    dropoffTime: document.querySelector(selectors.dropoffTime),
+//    dropoffLocation: document.querySelector(selectors.dropoffLocation),
+//
+//  }, selectors);
+//
+//  return locTimeData;
+//}
+
 async function getUserLoggedInPage(browser) {
   const page = await browser.newPage();
-  //page.setDownloadBehavior('allow');
-  //avoids a 'download multiple files' permission request
   await page.goto('http://partners.uber.com');
   //waits til user has manually logged in
   await page.waitForFunction(() => {
@@ -59,15 +69,10 @@ async function getUserLoggedInPage(browser) {
   return page;
 }
 
-
-async function navigateTo(page, url) {
-  const options = {
-    timeout: 0,
-    waitUntil: 'networkidle0',
-  };
-  await page.goto(url, options);
+async function safelyNavigate(page, url) {
+  await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: './scrapedData/statementCSVs'});
+  await page.goto(url, {timeout: 0, waitUntil: 'networkidle0'});
 }
-
 async function getAllStatementURLs(page) {
   // scrape hrefs
   // click next
@@ -96,7 +101,6 @@ function isAnotherPage(urls) {
 }
 
 
-// click all 'download csv' buttons
 async function clickDownloadCSVButtons(page) {
   var numTableRows = await page.evaluate(() => {
     return document.getElementsByTagName("table")[0].rows.length

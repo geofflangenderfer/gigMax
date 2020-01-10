@@ -14,6 +14,7 @@ Using these heatmaps, drivers can decide where/when they want to work in order t
 - Uber Driver web app contains incomplete data. For example, if I completed 20 trips in a week, the app would give details for only 10 of them. My first thought was to scrap the project because this would further reduce the trip data sample size. I quickly reconsidered and decided to add a manual entry feature, where gigMax told you a week's data was incomplete then allowed you to upload the missing trips. Despite being cumbersome, I thought it would still be worth it for drivers when they compared it to their potential increased earnings of ~$1,500/month.
 
 ## What mistakes did you make? Would you do anything different?
+- didn't fully explore the website manually: I ran into a dead-end with one approach to get all the trip data and got discouraged. I thought about scrapping the project. Then, I manually browsed the website again and found the current approach to grabbing relevant data. If I had given up early, I would have missed the current approach.  
 
 ## What technical decisions did you make? Why?
 - React frontend: fast prototyping, familiarity allowed me to focus on business logic
