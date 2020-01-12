@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 const puppeteer = require('puppeteer');
 const fs = require('fs'); 
+//https://github.com/mholt/PapaParse
+const csvPP = require('papa-parse');
+
 
 const selectors = {
   pickupTime: "#root > div > div > div > div > div.ae > div > div > div.c1.c2.c3 > div.al.cc.c5.cd.c7.ce.c9.cf.cb > div > div > div:nth-child(2) > div > div.by > div.dx.dy > div > div.e7 > div.dg > div.e8.cr.cn.co",
@@ -8,6 +11,7 @@ const selectors = {
   dropoffTime: "#root > div > div > div > div > div.ae > div > div > div.c1.c2.c3 > div.al.cc.c5.cd.c7.ce.c9.cf.cb > div > div > div:nth-child(2) > div > div.by > div.dx.dy > div > div.e7 > div:nth-child(2) > div.e8.cr.cn.co",
   dropoffLocation: "#root > div > div > div > div > div.ae > div > div > div.c1.c2.c3 > div.al.cc.c5.cd.c7.ce.c9.cf.cb > div > div > div:nth-child(2) > div > div.by > div.dx.dy > div > div.e7 > div:nth-child(2) > div:nth-child(2)",
 };
+const STATEMENTS_URL = "https://drivers.uber.com/p3/payments/statements";
 
 (async function main() {
   try {
@@ -17,10 +21,10 @@ const selectors = {
     });
     const page = await getUserLoggedInPage(browser);
 
-    const statementsURL = "https://drivers.uber.com/p3/payments/statements";
-    await safelyNavigate(page, statementsURL);
-    await clickDownloadCSVButtons(page);
-    //await saveTripHtmlContent(page);
+    // scrape data
+    //await safelyNavigate(page, STATEMENTS_URL);
+    //await clickDownloadCSVButtons(page);
+    await saveTripHtmlContent(page);
 
     await browser.close();
 
@@ -30,11 +34,14 @@ const selectors = {
 })();
 
 async function saveTripHtmlContent(page) {
+  // pull urls from csv files
+  // build trip urls
+  // visit each url and save html content
   const tripUrls = deriveTripUrls();
   for (let url of tripUrls) {
     await safelyNavigate(page, url);
     var html = await page.content();
-    fs.writeFileSync(`./scrapedData/htmlTripData/${url}.html`, html);
+    fs.writeFileSync(`./data/raw/tripHTML/${url}.html`, html);
   }
 
 }
@@ -70,7 +77,7 @@ async function getUserLoggedInPage(browser) {
 }
 
 async function safelyNavigate(page, url) {
-  await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: './scrapedData/statementCSVs'});
+  await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: './data/raw/statementCSVs'});
   await page.goto(url, {timeout: 0, waitUntil: 'networkidle0'});
 }
 async function getAllStatementURLs(page) {
@@ -105,6 +112,10 @@ async function clickDownloadCSVButtons(page) {
   var numTableRows = await page.evaluate(() => {
     return document.getElementsByTagName("table")[0].rows.length
   });
+  if (isUpToDate()) {
+    console.log("Data is up to date!");
+    return;
+  }
   // the 1st row is a table header, so we skip 0
   for (var i = 1; i < numTableRows; i++) {
     var downloadCSVSelector = `#root > div > div > div > div > div:nth-child(2) > div > table > tbody > tr:nth-child(${i}) > td:nth-child(5) > button`
@@ -114,6 +125,9 @@ async function clickDownloadCSVButtons(page) {
   await page.waitFor(30 * 1000);
 }
 
+//function isUpToDate() {
+//  
+//}
 // collect all statement urls then navigate to them later, which triggers download
 async function getPageStatementURLs(page) {
   var urls = await page.evaluate(() => {

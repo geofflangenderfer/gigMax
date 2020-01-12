@@ -12,6 +12,9 @@ Using these heatmaps, drivers can decide where/when they want to work in order t
 
 ## What challenges did you face? Would you do anything different?
 - Uber Driver web app contains incomplete data. For example, if I completed 20 trips in a week, the app would give details for only 10 of them. My first thought was to scrap the project because this would further reduce the trip data sample size. I quickly reconsidered and decided to add a manual entry feature, where gigMax told you a week's data was incomplete then allowed you to upload the missing trips. Despite being cumbersome, I thought it would still be worth it for drivers when they compared it to their potential increased earnings of ~$1,500/month.
+- after scraping, I had csv files and html content (later parsed to json). The question was: do I combine the data sources then insert into db or insert one piece into db then the other? I didn't investigate this too much, but my intuition was to go for the first for the following reasons:
+  - combining data with node is easier than with SQL (I don't know SQL so well)
+  - waiting on data to post to cloud db 2x would take longer than 1x
 
 ## What mistakes did you make? Would you do anything different?
 - didn't fully explore the website manually: I ran into a dead-end with one approach to get all the trip data and got discouraged. I thought about scrapping the project. Then, I manually browsed the website again and found the current approach to grabbing relevant data. If I had given up early, I would have missed the current approach.  
@@ -24,3 +27,8 @@ Using these heatmaps, drivers can decide where/when they want to work in order t
 
 ## What tech stack did you use? Why?
 
+## How can I get a demo of this project?
+- build from source (give instructions)
+- npm i __
+- go to __.com
+- check out youtube.com/{??}
