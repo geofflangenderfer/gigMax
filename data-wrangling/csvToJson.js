@@ -3,25 +3,17 @@
 const fs = require('fs');
 const papaParse = require('papaparse');
 const path = require('path');
+const { getFilePaths } = require('./utils/files.js');
 
 const CSV_DIR = '../data/raw/statementCSVs';
 const JSON_DIR = '../data/intermediate/statementJSONs';
 
 (function main() {
-  const csvPaths = getCSVPaths();
+  const csvPaths = getFilePaths(CSV_DIR);
   for (let csvPath of csvPaths) {
     saveCsvToJson(csvPath);
   }
 })();
-function getCSVPaths() {
-  const files = fs.readdirSync(CSV_DIR);
-  let paths = [];
-  for (let file of files) {
-    let thisPath = path.join(CSV_DIR, file);
-    paths.push(thisPath);
-  }
-  return paths;
-}
 function saveCsvToJson(csvFilePath) {
   let csvFileNames = fs.readFileSync(csvFilePath, 'utf8');
   let jsonFilePath = csvFilePathToJsonFilePath(csvFilePath);

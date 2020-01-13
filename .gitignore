@@ -125,4 +125,7 @@ sketch
 data/
 data/*
 data/**
+data.bak/
+data.bak/*
+data.bak/**
 # End of https://www.gitignore.io/api/node,react
