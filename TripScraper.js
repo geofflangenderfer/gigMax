@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 const puppeteer = require('puppeteer');
 const fs = require('fs'); 
-//https://github.com/mholt/PapaParse
-const csvPP = require('papa-parse');
 
 
 const selectors = {
@@ -112,10 +110,10 @@ async function clickDownloadCSVButtons(page) {
   var numTableRows = await page.evaluate(() => {
     return document.getElementsByTagName("table")[0].rows.length
   });
-  if (isUpToDate()) {
-    console.log("Data is up to date!");
-    return;
-  }
+  //if (isUpToDate()) {
+  //  console.log("Data is up to date!");
+  //  return;
+  //}
   // the 1st row is a table header, so we skip 0
   for (var i = 1; i < numTableRows; i++) {
     var downloadCSVSelector = `#root > div > div > div > div > div:nth-child(2) > div > table > tbody > tr:nth-child(${i}) > td:nth-child(5) > button`
@@ -125,9 +123,6 @@ async function clickDownloadCSVButtons(page) {
   await page.waitFor(30 * 1000);
 }
 
-//function isUpToDate() {
-//  
-//}
 // collect all statement urls then navigate to them later, which triggers download
 async function getPageStatementURLs(page) {
   var urls = await page.evaluate(() => {
