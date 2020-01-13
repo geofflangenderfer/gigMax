@@ -123,5 +123,6 @@ sketch
 
 # private data
 data/
+data/*
 data/**
 # End of https://www.gitignore.io/api/node,react
