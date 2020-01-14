@@ -3,28 +3,25 @@
 const fs = require('fs');
 const { getFilePaths } = require('./utils/files.js');
 
-const JSON_DIR = '../data.bak/intermediate/statementJSONs';
+const JSON_DIR = '../data/intermediate/statementJSONs';
 
 (function main() {
   const jsonFilePaths = getFilePaths(JSON_DIR);
-  for (let jsonFilePath of jsonFilePaths) {
-    setTripURLField(jsonFilePath);
-  }
+  setTripURLField(jsonFilePaths[0]);
+  //for (let jsonFilePath of jsonFilePaths) {
+  //  setTripURLField(jsonFilePath);
+  //}
 })();
-function getJSONFilePaths() {
-  const jsonFileNames = fs.readdirSync(JSON_DIR);
-  
-}
-function setTripURLField(jsonFileName) {
-  //if (!itExists(jsonFileName)) {
-  //  csvToJson(jsonFileName);
+function setTripURLField(jsonFilePath) {
+  //if (!itExists(jsonFilePath)) {
+  //  csvToJson(jsonFilePath);
   //}
 
-  let json = JSON.parse( fs.readFileSync(jsonFileName, 'utf8') );
-  console.log(json);
+  let json = JSON.parse( fs.readFileSync(jsonFilePath, 'utf8') );
+  json['Trip URL'] = getTripURL();
 }
 
-//function itExists(jsonFileName) {
+//function itExists(jsonFilePath) {
 //  
 //}
 

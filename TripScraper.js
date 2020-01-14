@@ -3,6 +3,10 @@ const puppeteer = require('puppeteer');
 const fs = require('fs'); 
 
 const STATEMENTS_URL = "https://drivers.uber.com/p3/payments/statements";
+const TRIP_HTML_DIR = "./data/raw/tripHTML";
+const STATEMENT_CSV_DIR = "./data/raw/statementCSVs";
+
+// scraper
 
 (async function main() {
   try {
@@ -14,7 +18,7 @@ const STATEMENTS_URL = "https://drivers.uber.com/p3/payments/statements";
 
     //await page.goto(STATEMENTS_URL, {timeout: 0, waitUntil: 'networkidle0'});
     //await clickDownloadCSVButtons(page);
-    await saveTripHtmlContent(page);
+    await saveTripHtmlContent(page, statement);
 
     await browser.close();
 
@@ -34,7 +38,7 @@ async function getUserLoggedInPage(browser) {
   return page;
 }
 async function clickDownloadCSVButtons(page) {
-  await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: './data.bak/raw/statementCSVs'});
+  await setDownloadPath(STATEMENT_CSV_DIR);
   var numTableRows = await page.evaluate(() => {
     return document.getElementsByTagName("table")[0].rows.length
   });
@@ -51,14 +55,29 @@ async function clickDownloadCSVButtons(page) {
   await page.waitFor(30 * 1000);
 }
 async function saveTripHtmlContent(page) {
-  // pull urls from csv files
-  // build trip urls
-  // visit each url and save html content
-  await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: './data.bak/raw/tripHTML'});
-  const tripUrls = deriveTripUrls();
-  for (let url of tripUrls) {
-    await page.goto(url, {timeout: 0, waitUntil: 'networkidle0'});
-    var html = await page.content();
-    fs.writeFileSync(`./data/raw/tripHTML/${url}.html`, html);
+    // for each statement
+    //   get trip urls
+    //   for each url
+    //    visit url
+    //    download html content
+  await setDownloadPath(TRIP_HTML_DIR);
+  const statementJSONs = getStatementJSONs();
+  for (let statementJSON of statementJSONs) {
+    const tripUrls = getTripURLs(statementJSON);
+    for (let url of tripUrls) {
+      await page.goto(url, {timeout: 0, waitUntil: 'networkidle0'});
+      var html = await page.content();
+      fs.writeFileSync(`./data/raw/tripHTML/${url}.html`, html);
+    }
   }
 }
+
+async function setDownloadPath(downloadPath) {
+  await page._client.send(
+    'Page.setDownloadBehavior', 
+    {behavior: 'allow', downloadPath: downloadPath}
+  );
+}
+
+// data-wrangling
+

@@ -1,9 +1,14 @@
 const fs = require('fs');
 const assert = require('assert');
-const { getFilePaths } = require('../../data-wrangling/utils/files.js');
+const { getFilePaths, getStatementsJSONs } = require('../../data-wrangling/utils/files.js');
 const { getFilePathsExpected } = require('./getFilePathsExpected.js');
 
-(function testGetFilePaths() {
+(function main() {
+  testGetFilePaths();
+  //testGetStatementJSONs();
+}
+)();
+function testGetFilePaths() {
   let actual = getFilePaths('./testJSONFiles');
   try {
     for (var i = 0; i < actual.length ; i++) {
@@ -12,4 +17,4 @@ const { getFilePathsExpected } = require('./getFilePathsExpected.js');
   } catch (e) {
     console.error(e);
   }
-})();
+}
