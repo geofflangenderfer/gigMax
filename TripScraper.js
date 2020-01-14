@@ -1,10 +1,14 @@
 #!/usr/bin/env node
+
 const puppeteer = require('puppeteer');
+const papaParse = require('papaparse');
+const path = require('path');
 const fs = require('fs'); 
 
 const STATEMENTS_URL = "https://drivers.uber.com/p3/payments/statements";
-const TRIP_HTML_DIR = "./data/raw/tripHTML";
-const STATEMENT_CSV_DIR = "./data/raw/statementCSVs";
+const TRIP_HTML_DIR = "./data.bak/raw/tripHTML";
+const CSV_DIR = "./data.bak/raw/statementCSVs";
+const JSON_DIR = './data.bak/intermediate/statementJSONs';
 
 // scraper
 
@@ -16,9 +20,10 @@ const STATEMENT_CSV_DIR = "./data/raw/statementCSVs";
     });
     const page = await getUserLoggedInPage(browser);
 
-    //await page.goto(STATEMENTS_URL, {timeout: 0, waitUntil: 'networkidle0'});
-    //await clickDownloadCSVButtons(page);
-    await saveTripHtmlContent(page, statement);
+    await downloadCSVs();
+    CSVsToJSONs();
+    //await downloadTripPageHTML(page);
+    //combineCsvJsons();
 
     await browser.close();
 
@@ -37,8 +42,12 @@ async function getUserLoggedInPage(browser) {
   }, 0);
   return page;
 }
+async function downloadCSVs(page) {
+  await page.goto(STATEMENTS_URL, {timeout: 0, waitUntil: 'networkidle0'});
+  await clickDownloadCSVButtons(page);
+}
 async function clickDownloadCSVButtons(page) {
-  await setDownloadPath(STATEMENT_CSV_DIR);
+  await setDownloadPath(CSV_DIR);
   var numTableRows = await page.evaluate(() => {
     return document.getElementsByTagName("table")[0].rows.length
   });
@@ -54,7 +63,39 @@ async function clickDownloadCSVButtons(page) {
   }
   await page.waitFor(30 * 1000);
 }
-async function saveTripHtmlContent(page) {
+function CSVsToJSONs() {
+  const csvFilePaths = getFilePathsArray(CSV_DIR);
+  for (let csvFilePath of csvFilePaths) {
+    saveCsvToJson(csvFilePath);
+  }
+}
+function getFilePathsArray(directory) {
+  const files = fs.readdirSync(directory);
+  let paths = [];
+  for (let file of files) {
+    let thisPath = path.join(directory, file);
+    paths.push(thisPath);
+  }
+  return paths;
+}
+function saveCsvToJson(csvFilePath) {
+  let csvFileNames = fs.readFileSync(csvFilePath, 'utf8');
+  let jsonFilePath = csvFilePathToJsonFilePath(csvFilePath);
+  papaParse.parse(csvFileNames, {
+    header: true,
+    //dynamicTyping: true,
+    skipEmptyLines: true,
+    complete: (results) => ( 
+      fs.writeFileSync(jsonFilePath, JSON.stringify(results.data, null, 4)) 
+    )
+  });
+}
+function csvFilePathToJsonFilePath(csvFilePath) {
+  let splitPath = csvFilePath.split("/");
+  let jsonPart = splitPath[splitPath.length - 1].split(".")[0] + ".json";
+  return path.join(JSON_DIR, jsonPart); 
+}
+async function downloadTripPageHTML(page) {
     // for each statement
     //   get trip urls
     //   for each url
