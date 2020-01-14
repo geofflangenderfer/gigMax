@@ -16,7 +16,7 @@ Using these heatmaps, drivers can decide where/when they want to work in order t
   - combining data with node is easier than with SQL (I don't know SQL so well)
   - waiting on data to post to cloud db 2x would take longer than 1x
 - I had to decide whether to mutate state of trip data or go with a functional approach that calculated a trip url every time it was requested. It was unclear because adding a trip url field means only calculating once, but also introduces data corruption risks. By calculating trip url each time, the total calculations increase, but there is a reduced risk of data corruption. I chose to go with a functional approach and avoid state mutation because most drivers will be doing on the order of 100s of trips, so there aren't a lot of calculations. I gain more confidence with trip data state at a minimal cost. It will be worth a look again if the system starts to process more trips.
-
+- relative import complexity: I initially tried to break up the app into different pieces, but ran into difficulties with relative imports. I went with centralizing all functions in one file in order to push off import complexity to later. My rationale is it's better to focus on app functionality than modularization at the beginning stages. Time will tell how this works.
 ## What mistakes did you make? Would you do anything different?
 - didn't fully explore the website manually: I ran into a dead-end with one approach to get all the trip data and got discouraged. I thought about scrapping the project. Then, I manually browsed the website again and found the current approach to grabbing relevant data. If I had given up early, I would have missed the current approach.  
 
