@@ -7,7 +7,7 @@ const fs = require('fs');
 
 const BASE_TRIP_URL = "https://drivers.uber.com/p3/payments/trips/"
 const STATEMENTS_URL = "https://drivers.uber.com/p3/payments/statements";
-const TRIP_HTML_DIR = "./data.bak/raw/tripHTML";
+const TRIP_HTML_DIR = "./data.bak/raw/tripHTML/";
 const CSV_DIR = "./data.bak/raw/statementCSVs";
 const JSON_DIR = './data.bak/intermediate/statementJSONs';
 
