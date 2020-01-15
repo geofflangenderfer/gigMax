@@ -5,6 +5,7 @@ const papaParse = require('papaparse');
 const path = require('path');
 const fs = require('fs'); 
 
+const BASE_TRIP_URL = "https://drivers.uber.com/p3/payments/trips/"
 const STATEMENTS_URL = "https://drivers.uber.com/p3/payments/statements";
 const TRIP_HTML_DIR = "./data.bak/raw/tripHTML";
 const CSV_DIR = "./data.bak/raw/statementCSVs";
@@ -20,9 +21,9 @@ const JSON_DIR = './data.bak/intermediate/statementJSONs';
     });
     const page = await getUserLoggedInPage(browser);
 
-    await downloadCSVs();
-    CSVsToJSONs();
-    //await downloadTripPageHTML(page);
+    //await downloadCSVs(page);
+    //CSVsToJSONs();
+    await downloadTripPageHTML(page);
     //combineCsvJsons();
 
     await browser.close();
@@ -47,7 +48,7 @@ async function downloadCSVs(page) {
   await clickDownloadCSVButtons(page);
 }
 async function clickDownloadCSVButtons(page) {
-  await setDownloadPath(CSV_DIR);
+  await setDownloadPath(page, CSV_DIR);
   var numTableRows = await page.evaluate(() => {
     return document.getElementsByTagName("table")[0].rows.length
   });
@@ -101,19 +102,35 @@ async function downloadTripPageHTML(page) {
     //   for each url
     //    visit url
     //    download html content
-  await setDownloadPath(TRIP_HTML_DIR);
-  const statementJSONs = getStatementJSONs();
-  for (let statementJSON of statementJSONs) {
-    const tripUrls = getTripURLs(statementJSON);
-    for (let url of tripUrls) {
-      await page.goto(url, {timeout: 0, waitUntil: 'networkidle0'});
-      var html = await page.content();
-      fs.writeFileSync(`./data/raw/tripHTML/${url}.html`, html);
-    }
+  await setDownloadPath(page, TRIP_HTML_DIR);
+  const tripIDs = getTripIDs();
+  for (let id of tripIDs) {
+    let url = BASE_TRIP_URL + id;
+    await page.goto(url, {timeout: 0, waitUntil: 'networkidle0'});
+    await page.waitFor(10 * 1000);
+    var html = await page.content();
+    fs.writeFileSync(TRIP_HTML_DIR + `${id}.html`, html);
   }
 }
-
-async function setDownloadPath(downloadPath) {
+function getTripIDs() {
+  let statementJSONs = getStatementJSONs();
+  let tripIDs = [];
+  //console.log(statementJSONs[1][0]['Trip ID']);
+  // for some reason the first element is an empty array, so we skip
+  for (let i = 1; i < statementJSONs.length; i++) {
+    for (let trip of statementJSONs[i]) {
+      tripIDs.push(trip['Trip ID']);
+    }
+  }
+  return tripIDs;
+}
+function getStatementJSONs() {
+  let statementJSONs = getFilePathsArray(JSON_DIR).map(filePath => (
+    JSON.parse(fs.readFileSync(filePath, 'utf8'))
+  ));
+  return statementJSONs;
+}
+async function setDownloadPath(page, downloadPath) {
   await page._client.send(
     'Page.setDownloadBehavior', 
     {behavior: 'allow', downloadPath: downloadPath}
