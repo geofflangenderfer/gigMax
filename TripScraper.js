@@ -6,11 +6,11 @@ const papaParse = require('papaparse');
 const path = require('path');
 const fs = require('fs'); 
 
-const BASE_TRIP_URL = "https://drivers.uber.com/p3/payments/trips/"
+const BASE_TRIP_URL = "https://drivers.uber.com/p3/payments/trips/";
 const STATEMENTS_URL = "https://drivers.uber.com/p3/payments/statements";
-const TRIP_HTML_DIR = "./data.bak/raw/tripHTML/";
-const CSV_DIR = "./data.bak/raw/statementCSVs";
-const JSON_DIR = './data.bak/intermediate/statementJSONs';
+const TRIP_HTML_DIR = "./data/raw/tripHTML/";
+const CSV_DIR = "./data/raw/statementCSVs";
+const JSON_DIR = './data/intermediate/statementJSONs';
 
 (async function main() {
   try {
@@ -102,17 +102,25 @@ async function downloadTripPageHTML(page) {
     //   for each url
     //    visit url
     //    extract pickup/dropoff time/location
+    //    save it
   await setDownloadPath(page, TRIP_HTML_DIR);
   const tripIDs = getTripIDs();
   for (let id of tripIDs) {
     let url = BASE_TRIP_URL + id;
     await page.goto(url, {timeout: 0, waitUntil: 'networkidle0'});
     await page.waitFor(10 * 1000);
-    let pageData = await extractPageData(page);
+    let html = await page.content();
+    //let pageData = await extractPageData(page);
     fs.writeFileSync(TRIP_HTML_DIR + `${id}.html`, html);
   }
 }
 async function extractPageData(page) {
+    // for each statement
+    //   get trip urls
+    //   for each url
+    //    visit url
+    //    extract pickup/dropoff time/location
+    //    save it
   let html = await page.content();
   let timeRegEx = /([0-1]?[0-9]|2[0-3]):[0-5][0-9] [A|P]M/g;
   let times = html.match(timeRegEx);
