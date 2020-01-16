@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const cheerio = require('cheerio');
 const puppeteer = require('puppeteer');
 const papaParse = require('papaparse');
 const path = require('path');
@@ -10,8 +11,6 @@ const STATEMENTS_URL = "https://drivers.uber.com/p3/payments/statements";
 const TRIP_HTML_DIR = "./data.bak/raw/tripHTML/";
 const CSV_DIR = "./data.bak/raw/statementCSVs";
 const JSON_DIR = './data.bak/intermediate/statementJSONs';
-
-// scraper
 
 (async function main() {
   try {
@@ -57,6 +56,7 @@ async function clickDownloadCSVButtons(page) {
   //  return;
   //}
   // the 1st row is a table header, so we skip 0
+  // https://csv.thephpleague.com/8.0/bom/ (I think this is another, unrelated error)
   for (var i = 1; i < numTableRows; i++) {
     var downloadCSVSelector = `#root > div > div > div > div > div:nth-child(2) > div > table > tbody > tr:nth-child(${i}) > td:nth-child(5) > button`
     await page.click(downloadCSVSelector)
@@ -101,16 +101,21 @@ async function downloadTripPageHTML(page) {
     //   get trip urls
     //   for each url
     //    visit url
-    //    download html content
+    //    extract pickup/dropoff time/location
   await setDownloadPath(page, TRIP_HTML_DIR);
   const tripIDs = getTripIDs();
   for (let id of tripIDs) {
     let url = BASE_TRIP_URL + id;
     await page.goto(url, {timeout: 0, waitUntil: 'networkidle0'});
     await page.waitFor(10 * 1000);
-    var html = await page.content();
+    let pageData = await extractPageData(page);
     fs.writeFileSync(TRIP_HTML_DIR + `${id}.html`, html);
   }
+}
+async function extractPageData(page) {
+  let html = await page.content();
+  let timeRegEx = /([0-1]?[0-9]|2[0-3]):[0-5][0-9] [A|P]M/g;
+  let times = html.match(timeRegEx);
 }
 function getTripIDs() {
   let statementJSONs = getStatementJSONs();
