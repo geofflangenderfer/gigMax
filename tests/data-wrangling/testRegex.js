@@ -2,12 +2,17 @@
 
 const cheerio = require('cheerio');
 const fs = require('fs');
+const path = require('path');
 const assert = require('assert');
+const { SELECTORS } = require('./selectors.js');
+const { testSet } = require('./testSet.js');
 
 (function main() {
   let html = fs.readFileSync('./00a326bd-1806-4292-a8f9-d295ba2bd9b9.html', 'utf8');
   //testTimeRegex(html);
-  testLocationRegex(html);
+  //testLocationRegex(html);
+  //testPickupAddressSelector();
+  testExtractPageDataSync();
 })();
 
 function testTimeRegex(string) {
@@ -20,13 +25,101 @@ function testTimeRegex(string) {
 }
 
 function testLocationRegex(string) {
-  //let re = /, [A-Z][a-z]+, [A-Z][a-z]+/g;
   let $ = cheerio.load(string);
-  let re = / [A-Z][a-z]+, ([A-Z][A-Z] | [A-Z][a-z]+)/g;
-  let actualTimes = $('div');
+  let reCityState = /, [A-Z][a-z]+, ([A-Z][A-Z]|[A-Z][a-z]+)/g;
+  let cityState = string.match(reCityState);
+  let cityStateSet = new Set( cityState );
+  //let actualLocations = $(`div:contains(${cityStateSet.entries()[0]})`).text();
+  let actualLocations = $('div').filter(() => {
+    return $(this).text().indexOf('San Jacinto') > -1;
+  });
   //.filter(div => (
   //  typeof div.text().match(re) == 'string'
   //));
-  console.log(actualTimes);
+  //console.log("cityState:", cityStateUnique);
+}
+
+function testPickupAddressSelector() {
+  let bakTripHTMLPath = '/home/geoff/work/gigMax/data.bak/raw/tripHTML';
+  let tripHTMLPath = '/home/geoff/work/gigMax/data/raw/tripHTML';
+  let bakNumPickupAddresses = getPickupAddressesInDirectory(bakTripHTMLPath).length;
+  let numPickupAddresses = getPickupAddressesInDirectory(tripHTMLPath).length;
+
+  assert(bakNumPickupAddresses == 305);
+  assert(numPickupAddresses == 273);
   
+}
+
+function getPickupAddressesInDirectory(dir) {
+  // array = []
+  // for each html file
+  //  use selector to grab pickup address
+  //  push to array
+  let htmls = getFilePathsArray(dir);
+  let pickupAddresses = htmls.map(html => {
+    let htmlString = fs.readFileSync(html, 'utf8');
+    let $ = cheerio.load(htmlString);
+    let pickupAddressSelector = '#root > div > div > div > div > div.ae > div > div > div.c1.c2.c3 > div.al.cc.c5.cd.c7.ce.c9.cf.cb > div > div > div:nth-child(2) > div > div.by > div.dx.dy > div > div.e7 > div.dg > div:nth-child(2)';
+'#root > div > div > div > div > div.ae > div > div > div.c1.c2.c3 > div.al.cc.c5.cd.c7.ce.c9.cf.cb > div > div > div:nth-child(2) > div > div.by > div.dx.dy > div > div.e7 > div.dg > div:nth-child(2)'
+    let pickupAddress = $(pickupAddressSelector).text();
+    return pickupAddress;
+  });
+
+  return pickupAddresses;
+}
+function getFilePathsArray(directory) {
+  const files = fs.readdirSync(directory);
+  let paths = files.map(file => (
+    path.join(directory, file)
+  ));
+  //let paths = [];
+  //for (let file of files) {
+  //  let thisPath = path.join(directory, file);
+  //  paths.push(thisPath);
+  //}
+  return paths;
+}
+
+function testExtractPageDataSync() {
+  let expected = {
+    pickupAddress: 'San Jacinto Blvd #201, Austin, TX 78701',
+    dropoffAddress: 'S 3rd St, Austin, Texas',
+    pickupTime: '9:22 PM',
+    dropoffTime: '10:02 PM',
+    duration: '37min 21sec',
+    distance: '3.93 mi',
+    licensePlate: 'BICYCLE'
+  }
+  let filePath = '/home/geoff/work/gigMax/data/raw/tripHTML/00a326bd-1806-4292-a8f9-d295ba2bd9b9.html';
+
+  //let actual = extractPageDataSync(filePath);
+  //for (let key in expected) {
+  //  assert(expected.key == actual.key);
+  //}
+
+  for (let file of testSet) {
+    let json = extractPageDataSync(file);
+  }
+}
+
+
+function extractPageDataSync(filePath) {
+  let html = fs.readFileSync(filePath, 'utf8');
+  let json = {};
+  for (selector in SELECTORS) {
+    json[selector] = extractPageDataWithSelector(html, selector);
+  }
+  console.log(json);
+  return json;
+}
+function extractPageDataWithSelector(html, selector) {
+  let $ = cheerio.load(html);
+  let data = '';
+  for (let thisSelector in selector) {
+    data = $(SELECTORS[thisSelector]).text();
+  }
+  if (data == '') {
+    //console.log(`Couldn't extract data from: ${html}`);
+  }
+  return data;
 }
