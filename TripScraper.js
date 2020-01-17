@@ -6,22 +6,16 @@ const papaParse = require('papaparse');
 const path = require('path');
 const fs = require('fs'); 
 
-const BASE_TRIP_URL = "https://drivers.uber.com/p3/payments/trips/";
-const STATEMENTS_URL = "https://drivers.uber.com/p3/payments/statements";
-const TRIP_HTML_DIR = "./data/raw/tripHTML/";
-const CSV_DIR = "./data/raw/statementCSVs";
-const JSON_STATEMENT_DIR = './data/intermediate/statementJSONs';
-const JSON_PAGE_DATA_DIR = './data/intermediate/pageData/';
+const {
+  BASE_TRIP_URL,
+  STATEMENTS_URL,
+  TRIP_HTML_DIR,
+  CSV_DIR,
+  JSON_STATEMENT_DIR,
+  JSON_PAGE_DATA_DIR,
+} = require('./uriStore.js');
+const { SELECTORS } = require('./selectors.js');
 
-const SELECTORS= {
-  pickupAddress: '#root > div > div > div > div > div.ae > div > div > div.c1.c2.c3 > div.al.cc.c5.cd.c7.ce.c9.cf.cb > div > div > div:nth-child(2) > div > div.by > div.dx.dy > div > div.e7 > div.dg > div:nth-child(2)',
-  dropoffAddress: '#root > div > div > div > div > div.ae > div > div > div.c1.c2.c3 > div.al.cc.c5.cd.c7.ce.c9.cf.cb > div > div > div:nth-child(2) > div > div.by > div.dx.dy > div > div.e7 > div:nth-child(2) > div:nth-child(2)',
-  pickupTime: '#root > div > div > div > div > div.ae > div > div > div.c1.c2.c3 > div.al.cc.c5.cd.c7.ce.c9.cf.cb > div > div > div:nth-child(2) > div > div.by > div.dx.dy > div > div.e7 > div.dg > div.e8.cr.cn.co',
-  dropoffTime: '#root > div > div > div > div > div.ae > div > div > div.c1.c2.c3 > div.al.cc.c5.cd.c7.ce.c9.cf.cb > div > div > div:nth-child(2) > div > div.by > div.dx.dy > div > div.e7 > div:nth-child(2) > div.e8.cr.cn.co',
-  duration: '#root > div > div > div > div > div.ae > div > div > div.c1.c2.c3 > div.al.cc.c5.cd.c7.ce.c9.cf.cb > div > div > div:nth-child(2) > div > div.by > div:nth-child(3) > div > div > div.ed.ee.ef > div.dh.eg.eh',
-  distance: '#root > div > div > div > div > div.ae > div > div > div.c1.c2.c3 > div.al.cc.c5.cd.c7.ce.c9.cf.cb > div > div > div:nth-child(2) > div > div.by > div:nth-child(3) > div > div > div.ed.ee.ei > div.dh.eg.eh',
-  licensePlate: '#root > div > div > div > div > div.ae > div > div > div.c1.c2.c3 > div.al.cc.c5.cd.c7.ce.c9.cf.cb > div > div > div:nth-child(2) > div > div.by > div:nth-child(5) > div.dh.eg.eh',
-};
 
 (async function main() {
   try {
@@ -37,7 +31,7 @@ const SELECTORS= {
     //eventually, save only the data I need, which will reduce required storage
     //await extractDownloadedPageData(page);
     //combineCsvJsons();
-    extractDownloadedPageData();
+    //extractDownloadedPageData();
 
     //await browser.close();
 
@@ -128,44 +122,49 @@ async function downloadTripPageHTML(page) {
   }
 }
 async function extractPageDataAsync(page) {
-    // for each statement
-    //   get trip urls
-    //   for each url
-    //    visit url
-    //    extract pickup/dropoff time/location
-    //    save it
   
 }
 function extractDownloadedPageData() {
-  // for each html file
-  //  find pickup/dropoff time/location, duration, distance, License Plate (gives vehicle type)
-  //  save as intermediate/pageData/{trip_id}.json
   let htmls = getFilePathsArray(TRIP_HTML_DIR);
   for (let html of htmls) {
     let pageDataObject = extractPageDataSync(html);
+    if (isEmpty(pageDataObject)) { saveIncompletePageDataPath(html) };
     let tripID = getIDFromFilePath(html);
-    if (pageDataObject.pickupAddress == '') {
-      console.log(html);  
-    }
-    let jsonFilePath = `${JSON_PAGE_DATA_DIR}/${tripID}.json`//path.join(JSON_PAGE_DATA_DIR, tripID, '.json');
+    let jsonFilePath = `${JSON_PAGE_DATA_DIR}/${tripID}.json`;
     fs.writeFileSync(jsonFilePath, JSON.stringify(pageDataObject, null, 4)) 
   }
 }
-
 function getIDFromFilePath(filePath) {
   let bySlash = filePath.split('/');
   let byPeriod = bySlash[bySlash.length-1].split('.')[0];
   return byPeriod;
 }
+function isEmpty(json) {
+  let keysCondition = Object.keys(json).length == 7;
+  let valuesCondition = Object.values(json)
+    .filter(value => value == '')
+    .length == 7;
+  return keysCondition && valuesCondition;
+}
+function saveIncompletePageDataPath(filePath) {
+  fs.appendFileSync(JSON_PAGE_DATA_DIR + '/incompleteFiles.csv', filePath);
+}
 function extractPageDataSync(filePath) {
   let html = fs.readFileSync(filePath, 'utf8');
-  let $ = cheerio.load(html);
   let json = {};
   for (selector in SELECTORS) {
-    json[selector] = $(SELECTORS[selector]).text();
+    json[selector] = extractPageDataWithSelector(html, SELECTORS[ selector ]);
   }
   return json;
-  
+}
+function extractPageDataWithSelector(html, selectors) {
+  let $ = cheerio.load(html);
+  let data = '';
+  for (let selector of selectors) {
+    data = $(selector).text();
+    if (data != '') break;
+  }
+  return data;
 }
 function getTripIDsArray() {
   let statementJSONs = getStatementJSONs();
@@ -192,5 +191,6 @@ async function setDownloadPath(page, downloadPath) {
   );
 }
 
-// data-wrangling
-
+module.exports = {
+  getFilePathsArray,
+};

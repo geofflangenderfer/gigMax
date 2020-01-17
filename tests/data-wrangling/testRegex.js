@@ -40,15 +40,12 @@ function testExtractPageDataSync() {
   console.log("# of problem files:", problemFiles.length);
   fs.writeFileSync('./problemFiles.csv', problemFiles);
 }
-
-
-function extractPageDataSync(htmlFile) {
-  let html = fs.readFileSync(htmlFile, 'utf8');
+function extractPageDataSync(filePath) {
+  let html = fs.readFileSync(filePath, 'utf8');
   let json = {};
   for (selector in SELECTORS) {
     json[selector] = extractPageDataWithSelector(html, SELECTORS[ selector ]);
   }
-  console.log(json);
   return json;
 }
 function isEmpty(json) {
