@@ -15,10 +15,10 @@
 - earnings dashboard: easy to build and validates that couriers are interested in this information.
   - finish data processing 
   - store into db
-  - data request queries
+  - data request queries (can publish blog article at this point)
   - display on react frontend
   - login
-- blog article explaining how I use data to maximize hourly
+- blog article explaining how I use data to maximize my hourly
 
 # Frontend
 - login screen to keep data private

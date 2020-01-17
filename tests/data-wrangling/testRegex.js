@@ -8,12 +8,65 @@ const { SELECTORS } = require('./selectors.js');
 const { testSet } = require('./testSet.js');
 
 (function main() {
-  let html = fs.readFileSync('./00a326bd-1806-4292-a8f9-d295ba2bd9b9.html', 'utf8');
+  //let html = fs.readFileSync('./00a326bd-1806-4292-a8f9-d295ba2bd9b9.html', 'utf8');
   //testTimeRegex(html);
   //testLocationRegex(html);
   //testPickupAddressSelector();
   testExtractPageDataSync();
 })();
+function testExtractPageDataSync() {
+  let expected = {
+    pickupAddress: 'San Jacinto Blvd #201, Austin, TX 78701',
+    dropoffAddress: 'S 3rd St, Austin, Texas',
+    pickupTime: '9:22 PM',
+    dropoffTime: '10:02 PM',
+    duration: '37min 21sec',
+    distance: '3.93 mi',
+    licensePlate: 'BICYCLE'
+  }
+  //let filePath = '/home/geoff/work/gigMax/data/raw/tripHTML/08b508ab-4217-4084-9f88-08f77d6eb63a.html';
+  //let actual = extractPageDataSync(filePath);
+  //for (let key in expected) {
+  //  assert(expected.key == actual.key);
+  //}
+
+  let problemFiles = [];
+  for (let file of testSet) {
+    let json = extractPageDataSync(file);
+    if (isEmpty(json)) {
+      problemFiles.push(file);
+    }
+  }
+  console.log("# of problem files:", problemFiles.length);
+  fs.writeFileSync('./problemFiles.csv', problemFiles);
+}
+
+
+function extractPageDataSync(htmlFile) {
+  let html = fs.readFileSync(htmlFile, 'utf8');
+  let json = {};
+  for (selector in SELECTORS) {
+    json[selector] = extractPageDataWithSelector(html, SELECTORS[ selector ]);
+  }
+  console.log(json);
+  return json;
+}
+function isEmpty(json) {
+  let keysCondition = Object.keys(json).length == 7;
+  let valuesCondition = Object.values(json)
+    .filter(value => value == '')
+    .length == 7;
+  return keysCondition && valuesCondition;
+}
+function extractPageDataWithSelector(html, selectors) {
+  let $ = cheerio.load(html);
+  let data = '';
+  for (let selector of selectors) {
+    data = $(selector).text();
+    if (data != '') break;
+  }
+  return data;
+}
 
 function testTimeRegex(string) {
   let re = /([0-1]?[0-9]|2[0-3]):[0-5][0-9] [A|P]M/g;
@@ -80,46 +133,3 @@ function getFilePathsArray(directory) {
   return paths;
 }
 
-function testExtractPageDataSync() {
-  let expected = {
-    pickupAddress: 'San Jacinto Blvd #201, Austin, TX 78701',
-    dropoffAddress: 'S 3rd St, Austin, Texas',
-    pickupTime: '9:22 PM',
-    dropoffTime: '10:02 PM',
-    duration: '37min 21sec',
-    distance: '3.93 mi',
-    licensePlate: 'BICYCLE'
-  }
-  let filePath = '/home/geoff/work/gigMax/data/raw/tripHTML/00a326bd-1806-4292-a8f9-d295ba2bd9b9.html';
-
-  //let actual = extractPageDataSync(filePath);
-  //for (let key in expected) {
-  //  assert(expected.key == actual.key);
-  //}
-
-  for (let file of testSet) {
-    let json = extractPageDataSync(file);
-  }
-}
-
-
-function extractPageDataSync(filePath) {
-  let html = fs.readFileSync(filePath, 'utf8');
-  let json = {};
-  for (selector in SELECTORS) {
-    json[selector] = extractPageDataWithSelector(html, selector);
-  }
-  console.log(json);
-  return json;
-}
-function extractPageDataWithSelector(html, selector) {
-  let $ = cheerio.load(html);
-  let data = '';
-  for (let thisSelector in selector) {
-    data = $(SELECTORS[thisSelector]).text();
-  }
-  if (data == '') {
-    //console.log(`Couldn't extract data from: ${html}`);
-  }
-  return data;
-}
