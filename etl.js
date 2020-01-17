@@ -17,61 +17,6 @@ const {
 const { SELECTORS } = require('./selectors.js');
 
 
-(async function main() {
-  try {
-    //const browser = await puppeteer.launch({
-    //  headless: false,
-    //  args: ['--disable-notifications']
-    //});
-    //const page = await getUserLoggedInPage(browser);
-
-    //await downloadCSVs(page);
-    //CSVsToJSONs();
-    //await downloadTripPageHTML(page);
-    //eventually, save only the data I need, which will reduce required storage
-    //await extractDownloadedPageData(page);
-    //combineCsvJsons();
-    //extractDownloadedPageData();
-
-    //await browser.close();
-
-  } catch(error) {
-    console.error(error);
-  }
-})();
-async function getUserLoggedInPage(browser) {
-  const page = await browser.newPage();
-  await page.goto('http://partners.uber.com');
-  //waits til user has manually logged in
-  await page.waitForFunction(() => {
-    const url = document.location.hostname;
-
-    return url == "drivers.uber.com";
-  }, 0);
-  return page;
-}
-async function downloadCSVs(page) {
-  await page.goto(STATEMENTS_URL, {timeout: 0, waitUntil: 'networkidle0'});
-  await clickDownloadCSVButtons(page);
-}
-async function clickDownloadCSVButtons(page) {
-  await setDownloadPath(page, CSV_DIR);
-  let numTableRows = await page.evaluate(() => {
-    return document.getElementsByTagName("table")[0].rows.length
-  });
-  //if (isUpToDate()) {
-  //  console.log("Data is up to date!");
-  //  return;
-  //}
-  // the 1st row is a table header, so we skip 0
-  // https://csv.thephpleague.com/8.0/bom/ (I think this is another, unrelated error)
-  for (let i = 1; i < numTableRows; i++) {
-    let downloadCSVSelector = `#root > div > div > div > div > div:nth-child(2) > div > table > tbody > tr:nth-child(${i}) > td:nth-child(5) > button`
-    await page.click(downloadCSVSelector)
-    await page.waitFor(10 * 1000);
-  }
-  await page.waitFor(30 * 1000);
-}
 function CSVsToJSONs() {
   const csvFilePaths = getFilePathsArray(CSV_DIR);
   for (let csvFilePath of csvFilePaths) {
