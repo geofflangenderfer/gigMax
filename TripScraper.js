@@ -14,38 +14,40 @@ const {
   JSON_STATEMENT_DIR,
   JSON_PAGE_DATA_DIR,
 } = require('./uriStore.js');
-const { SELECTORS } = require('./selectors.js');
+const { SELECTORS } = require('./cssSelectors.js');
+const {
+  CSVsToJSONs,
+  getStatementJSONs,
+  getAllTripIDsArray
+} = require('./etl.js');
 
 
 (async function main() {
+  //input is manual login by user
+  //output is statementCSVs, and statement JSON files, {tripID}.html files
   try {
-    //const browser = await puppeteer.launch({
-    //  headless: false,
-    //  args: ['--disable-notifications']
-    //});
-    //const page = await getUserLoggedInPage(browser);
+    const browser = await puppeteer.launch({
+      headless: false,
+      args: ['--disable-notifications']
+    });
+    const page = await getUserLoggedInPage(browser);
 
-    //await downloadCSVs(page);
-    //CSVsToJSONs();
-    //await downloadTripPageHTML(page);
-    //eventually, save only the data I need, which will reduce required storage
-    //await extractDownloadedPageData(page);
-    //combineCsvJsons();
-    //extractDownloadedPageData();
+    await downloadCSVs(page);
+    CSVsToJSONs();
+    await downloadTripPageHTML(page);
 
-    //await browser.close();
-
+    await browser.close();
   } catch(error) {
     console.error(error);
   }
 })();
 async function getUserLoggedInPage(browser) {
   const page = await browser.newPage();
-  await page.goto('http://partners.uber.com');
-  //waits til user has manually logged in
+  await page.goto('http://drivers.uber.com');
+  //uber initially directs you to an auth.uber.com url. We arrive at 
+  //drivers.uber.com after completing auth
   await page.waitForFunction(() => {
     const url = document.location.hostname;
-
     return url == "drivers.uber.com";
   }, 0);
   return page;
@@ -72,37 +74,16 @@ async function clickDownloadCSVButtons(page) {
   }
   await page.waitFor(30 * 1000);
 }
-function CSVsToJSONs() {
-  const csvFilePaths = getFilePathsArray(CSV_DIR);
-  for (let csvFilePath of csvFilePaths) {
-    saveCsvToJson(csvFilePath);
-  }
+async function setDownloadPath(page, downloadPath) {
+  await page._client.send(
+    'Page.setDownloadBehavior', 
+    {behavior: 'allow', downloadPath: downloadPath}
+  );
 }
-function getFilePathsArray(directory) {
-  const files = fs.readdirSync(directory);
-  let paths = [];
-  for (let file of files) {
-    let thisPath = path.join(directory, file);
-    paths.push(thisPath);
-  }
-  return paths;
-}
-function saveCsvToJson(csvFilePath) {
-  let csvFileNames = fs.readFileSync(csvFilePath, 'utf8');
-  let jsonFilePath = csvFilePathToJsonFilePath(csvFilePath);
-  papaParse.parse(csvFileNames, {
-    header: true,
-    //dynamicTyping: true,
-    skipEmptyLines: true,
-    complete: (results) => ( 
-      fs.writeFileSync(jsonFilePath, JSON.stringify(results.data, null, 4)) 
-    )
-  });
-}
-function csvFilePathToJsonFilePath(csvFilePath) {
-  let splitPath = csvFilePath.split("/");
-  let jsonPart = splitPath[splitPath.length - 1].split(".")[0] + ".json";
-  return path.join(JSON_STATEMENT_DIR, jsonPart); 
+async function extractPageDataAsync(page) {
+  // use css selectors while online/on page instead of offline merge
+  // this will replace downloading html then merging parts offline
+  // should reduce space needed, not sure about time
 }
 async function downloadTripPageHTML(page) {
     // for each statement
@@ -121,87 +102,7 @@ async function downloadTripPageHTML(page) {
     fs.writeFileSync(TRIP_HTML_DIR + `${id}.html`, html);
   }
 }
-async function extractPageDataAsync(page) {
-  
-}
-function extractDownloadedPageData() {
-  let htmls = getFilePathsArray(TRIP_HTML_DIR);
-  for (let html of htmls) {
-    let pageDataObject = extractPageDataSync(html);
-    if (isEmpty(pageDataObject)) { saveIncompletePageDataPath(html) };
-    let tripID = getIDFromFilePath(html);
-    let jsonFilePath = `${JSON_PAGE_DATA_DIR}/${tripID}.json`;
-    fs.writeFileSync(jsonFilePath, JSON.stringify(pageDataObject, null, 4)) 
-  }
-}
-function getIDFromFilePath(filePath) {
-  let bySlash = filePath.split('/');
-  let byPeriod = bySlash[bySlash.length-1].split('.')[0];
-  return byPeriod;
-}
-function isEmpty(json) {
-  let keysCondition = Object.keys(json).length == 7;
-  let valuesCondition = Object.values(json)
-    .filter(value => value == '')
-    .length == 7;
-  return keysCondition && valuesCondition;
-}
-function saveIncompletePageDataPath(filePath) {
-  fs.appendFileSync(JSON_PAGE_DATA_DIR + '/incompleteFiles.csv', filePath);
-}
-function extractPageDataSync(filePath) {
-  let html = fs.readFileSync(filePath, 'utf8');
-  let json = {};
-  for (selector in SELECTORS) {
-    json[selector] = extractPageDataWithSelector(html, SELECTORS[ selector ]);
-  }
-  return json;
-}
-function extractPageDataWithSelector(html, selectors) {
-  let $ = cheerio.load(html);
-  let data = '';
-  for (let selector of selectors) {
-    data = $(selector).text();
-    if (data != '') break;
-  }
-  return data;
-}
-function getAllTripIDsArray() {
-  let statementJSONs = getStatementJSONs();
-  let tripIDs = [];
-  //console.log(statementJSONs[1][0]['Trip ID']);
-  // for some reason the first element is an empty array, so we skip
-  for (let i = 1; i < statementJSONs.length; i++) {
-    for (let trip of statementJSONs[i]) {
-      tripIDs.push(trip['Trip ID']);
-    }
-  }
-  return tripIDs;
-}
-function getStatementTripIDs(statementPath) {
-  let statementJSON = getJSON(statementPath);
-  let tripIDs = [];
-  for (let trip of statementJSON) {
-    tripIDs.push(trip['Trip ID']);
-  }
-  return tripIDs;
-}
-function getStatementJSONs() {
-  let statementJSONs = getFilePathsArray(JSON_STATEMENT_DIR).map(filePath => (
-    getJSON(filePath)
-  ));
-  return statementJSONs;
-}
-function getJSON(jsonPath) {
-  return JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
-}
-async function setDownloadPath(page, downloadPath) {
-  await page._client.send(
-    'Page.setDownloadBehavior', 
-    {behavior: 'allow', downloadPath: downloadPath}
-  );
-}
 
-module.exports = {
-  getFilePathsArray,
-};
+//module.exports = {
+//  TripScraper,
+//};

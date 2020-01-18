@@ -10,6 +10,7 @@
 - user goes to peer ranking tab and sees that he's in 90th percentile for $ earned/month and 50th for $/hr
 - user goes to where did i go tab to see a replay of his work night with chronological pickups/dropoffs
 - user goes to apt building tab to note an entrance code
+- blacklist restaurants/customers
 
 # Feature Stack Rank: Descending Importance
 - earnings dashboard: easy to build and validates that couriers are interested in this information.
