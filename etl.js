@@ -24,7 +24,8 @@ const { SELECTORS } = require('./cssSelectors.js');
   //extractDownloadedPageData();
   //combines intermediate/pageData/{tripID}.json 
   //and intermediate/statementsJSON/statements_{tripID}.json
-  combineExtractedAndCSVData();
+  //combineExtractedAndCSVData();
+  buildStatementTripIDsStore();
 })();
 function combineExtractedAndCSVData() {
   //for each statement
@@ -154,7 +155,7 @@ function getStatementTripIDs(statementPath) {
   for (let trip of statementJSON) {
     tripIDs.push(trip['Trip ID']);
   }
-  return tripIDs;
+  return {statementPath: tripIDs};
 }
 function getStatementJSONs() {
   let statementJSONs = getFilePathsArray(JSON_STATEMENT_DIR).map(filePath => (
@@ -164,6 +165,17 @@ function getStatementJSONs() {
 }
 function getJSON(jsonPath) {
   return JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+}
+function buildStatementTripIDsStore() {
+  // need to build hashmap tripID -> statementPath
+  let statementPaths = getFilePathsArray(JSON_STATEMENT_DIR);
+  let store = {};
+  for (let path of statementPaths) {
+    let key = path.split("/")[3];
+    let store[key] = getStatementTripIDs(path);
+  }
+  console.log(store);
+  fs.writeFileSync('./data/intermediate/statementTripIDStore.json', store);
 }
 
 module.exports = {
