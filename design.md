@@ -3,6 +3,7 @@
 - user asks google assistant app when it should work this week -> app gives back top 2 $/hr slots and asks user if they'd like to add to their calendar
 - earnings dashboard: $/hr, $/week, $/month, heatmaps
 - notification of upcoming high $/hr promotions
+- true cost feature: your fares represent revenue, but you also have costs: depreciation, gas, parking, maintenance, tickets, taxes, insurance, monthly car payment. True cost shows you your salary after all these things.
 
 - user goes to Coach Max tab and it tells him DOW/TOD/location to work given his calendar availability, home location, and vehicle type
 - user goes to # deliveries/hour heatmap and sees that UT campus is best. He'll keep this is mind when there's a # deliveries bonus
@@ -11,6 +12,12 @@
 - user goes to where did i go tab to see a replay of his work night with chronological pickups/dropoffs
 - user goes to apt building tab to note an entrance code
 - blacklist restaurants/customers
+
+# Driver Interests
+- am i getting better over time (create baseline to compare current performance)?
+- how does this job compare to others? Higher/lower $/hr?
+- how am I doing compared to my peers?
+- should I rent a car or use a bike?
 
 # Feature Stack Rank: Descending Importance
 - earnings dashboard: easy to build and validates that couriers are interested in this information.

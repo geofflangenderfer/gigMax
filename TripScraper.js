@@ -13,6 +13,7 @@ const {
   CSV_DIR,
   JSON_STATEMENT_DIR,
   JSON_PAGE_DATA_DIR,
+  INCOMPLETE_TRIP_HTML_FILE,
 } = require('./uriStore.js');
 const { SELECTORS } = require('./cssSelectors.js');
 const {
@@ -32,8 +33,8 @@ const {
     });
     const page = await getUserLoggedInPage(browser);
 
-    await downloadCSVs(page);
-    CSVsToJSONs();
+    //await downloadCSVs(page);
+    //CSVsToJSONs();
     await downloadTripPageHTML(page);
 
     await browser.close();
@@ -49,7 +50,7 @@ async function getUserLoggedInPage(browser) {
   await page.waitForFunction(() => {
     const url = document.location.hostname;
     return url == "drivers.uber.com";
-  }, 0);
+  }, {timeout: 0 });
   return page;
 }
 async function downloadCSVs(page) {
@@ -87,19 +88,26 @@ async function extractPageDataAsync(page) {
 }
 async function downloadTripPageHTML(page) {
     // for each statement
-    //   get trip urls
-    //   for each url
+    //   get trip urls and add to queue
+    //   while urls in queue
     //    visit url
-    //    extract pickup/dropoff time/location
-    //    save it
+    //    try to extract/save data, push url to back of queue if unsuccessful
   await setDownloadPath(page, TRIP_HTML_DIR);
-  const tripIDs = getAllTripIDsArray();
-  for (let id of tripIDs) {
+  let tripIDs = ['poop'];//getAllTripIDsArray();
+  while (tripIDs) {
+    let id = tripIDs.shift();
     let url = BASE_TRIP_URL + id;
     await page.goto(url, {timeout: 0, waitUntil: 'networkidle0'});
     await page.waitFor(10 * 1000);
-    let html = await page.content();
-    fs.writeFileSync(TRIP_HTML_DIR + `${id}.html`, html);
+    try {
+      let html = await page.content();
+      fs.writeFileSync(TRIP_HTML_DIR + `${id}.html`, html);
+    } catch (e) {
+      console.log(`${id} didn't load. Adding to the back of queue`);
+      console.error(e);
+      console.log("Here's what html looks like:\n", html);
+      tripIDs.push(id);
+    }
   }
 }
 
