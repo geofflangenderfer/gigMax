@@ -1,0 +1,1 @@
+https://www.metabase.com/docs/latest/operations-guide/running-metabase-on-elastic-beanstalk.html\#running-metabase-on-aws-elastic-beanstalk
