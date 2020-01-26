@@ -33,8 +33,8 @@ const {
     });
     const page = await getUserLoggedInPage(browser);
 
-    //await downloadCSVs(page);
-    //CSVsToJSONs();
+    await downloadCSVs(page);
+    CSVsToJSONs();
     await downloadTripPageHTML(page);
 
     await browser.close();
@@ -93,7 +93,7 @@ async function downloadTripPageHTML(page) {
     //    visit url
     //    try to extract/save data, push url to back of queue if unsuccessful
   await setDownloadPath(page, TRIP_HTML_DIR);
-  let tripIDs = ['poop'];//getAllTripIDsArray();
+  let tripIDs = getAllTripIDsArray();
   while (tripIDs) {
     let id = tripIDs.shift();
     let url = BASE_TRIP_URL + id;
