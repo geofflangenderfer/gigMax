@@ -32,22 +32,22 @@ function combineExtractedAndCSVData() {
   //  load statement
   //  get tripIDS
   //  for each tripID
-  //    load add'l page data
-  //    for each add'l data point
-  //      load into statement
+  //    merge statement and add'l page data
   //  save statement
-  let statementFilePaths = getFilePathsArray(JSON_STATEMENT_DIR);
+  let statementFilePaths: string[] = getFilePathsArray(JSON_STATEMENT_DIR);
   for (let path of statementFilePaths) {
-    let statementJSON = getJSON(path);
-    let tripIDs = getStatementTripIDs(path);
-    let merged;
+    let statementJSON: object = getJSON(path);
+    let tripIDs: string[] = getStatementTripIDs(path);
     for (let id of tripIDs) {
-      let pageDataPath = getPageDataPathFromTripID(id);
-      let pageDataJSON = getJSON(pageDataPath);
-      let merged = mergeJSON.merge(pageDataJSON, statementJSON);
+      incorporateAddlPageData(id, statementJSON);
     }
-    fs.writeFileSync(JSON_MERGED_DIR, merged);
+    fs.writeFileSync(JSON_MERGED_DIR, statementJSON);
   }
+}
+function incorporateAddlPageData(tripID: string, statement: object): void {
+      let pageDataPath: string = getPageDataPathFromTripID(tripID);
+      let pageDataJSON: object = getJSON(pageDataPath);
+      mergeJSON.merge(pageDataJSON, statement);
 }
 function getPageDataPathFromTripID(id) {
   let pageDataPaths = getFilePathsArray(JSON_PAGE_DATA_DIR); 
