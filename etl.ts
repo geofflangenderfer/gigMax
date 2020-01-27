@@ -39,23 +39,22 @@ function combineExtractedAndCSVData(): void {
     fs.writeFileSync(fileName, statementJSON);
   }
 }
-  
 function mergeAddlDataWithStatement(tripID: string, statementPath: string): object {
-  let addlDataPath: string = getPageDataPathFromTripID(tripID);
+  let addlDataPath: string = getPageDataPathFromTripID(tripID, JSON_PAGE_DATA_DIR);
   let addlData: object = getJSON(addlDataPath); 
   let statement: object = getJSON(statementPath);
   return mergeJSON.merge(addlData, statement);
 }
-function getPageDataPathFromTripID(tripID: string): string {
-  let pageDataPaths = getFilePathsArray(JSON_PAGE_DATA_DIR); 
-  let pageDataPath = '';
+function getPageDataPathFromTripID(tripID: string, dir: string): string {
+  let pageDataPaths = getFilePathsArray(dir); 
+  let matchingPath = '';
   for (let pageDataPath of pageDataPaths) {
     if (isMatch(tripID, pageDataPath)) {
-      pageDataPath = pageDataPath;
+      matchingPath = pageDataPath;
       break;
     }
   }
-  return pageDataPath;
+  return matchingPath;
 }
 function isMatch(tripID: string, pageDataPath: string): boolean {
   let regex = new RegExp(tripID);
@@ -183,6 +182,7 @@ module.exports = {
   getJSON,
   getFilePathsArray,
   isMatch,
+  getPageDataPathFromTripID,
 };
 
 

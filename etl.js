@@ -28,21 +28,21 @@ function combineExtractedAndCSVData() {
     }
 }
 function mergeAddlDataWithStatement(tripID, statementPath) {
-    let addlDataPath = getPageDataPathFromTripID(tripID);
+    let addlDataPath = getPageDataPathFromTripID(tripID, JSON_PAGE_DATA_DIR);
     let addlData = getJSON(addlDataPath);
     let statement = getJSON(statementPath);
     return mergeJSON.merge(addlData, statement);
 }
-function getPageDataPathFromTripID(tripID) {
-    let pageDataPaths = getFilePathsArray(JSON_PAGE_DATA_DIR);
-    let pageDataPath = '';
+function getPageDataPathFromTripID(tripID, dir) {
+    let pageDataPaths = getFilePathsArray(dir);
+    let matchingPath = '';
     for (let pageDataPath of pageDataPaths) {
         if (isMatch(tripID, pageDataPath)) {
-            pageDataPath = pageDataPath;
+            matchingPath = pageDataPath;
             break;
         }
     }
-    return pageDataPath;
+    return matchingPath;
 }
 function isMatch(tripID, pageDataPath) {
     let regex = new RegExp(tripID);
@@ -166,4 +166,5 @@ module.exports = {
     getJSON,
     getFilePathsArray,
     isMatch,
+    getPageDataPathFromTripID,
 };
