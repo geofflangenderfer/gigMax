@@ -1,12 +1,12 @@
 const BASE_TRIP_URL = "https://drivers.uber.com/p3/payments/trips/";
 const STATEMENTS_URL = "https://drivers.uber.com/p3/payments/statements";
-const TRIP_HTML_DIR = "./data/raw/tripHTML/";
-const CSV_DIR = "./data/raw/statementCSVs";
-const JSON_STATEMENT_DIR = './data/intermediate/statementJSONs';
-const JSON_PAGE_DATA_DIR = './data/intermediate/pageData/';
-const INCOMPLETE_TRIP_IDS = './incompleteDataTripIDs.txt';
-const JSON_MERGED_DIR = './data/final/';
-const INCOMPLETE_TRIP_HTML_FILE = './incompleteHTMLDownloads.txt';
+const TRIP_HTML_DIR = "/home/geoff/work/gigMax/data/raw/tripHTML/";
+const CSV_DIR = "/home/geoff/work/gigMax/data/raw/statementCSVs/";
+const JSON_STATEMENT_DIR = '/home/geoff/work/gigMax/data/intermediate/statementJSONs/';
+const JSON_PAGE_DATA_DIR = '/home/geoff/work/gigMax/data/intermediate/pageData/';
+const INCOMPLETE_TRIP_IDS = '/home/geoff/work/gigMax/incompleteDataTripIDs.txt';
+const JSON_MERGED_DIR = '/home/geoff/work/gigMax/data/final/';
+const INCOMPLETE_TRIP_HTML_FILE = '/home/geoff/work/gigMax/incompleteHTMLDownloads.txt';
 
 module.exports = {
   BASE_TRIP_URL,
