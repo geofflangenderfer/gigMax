@@ -17,26 +17,26 @@ const TEST_STATEMENT_EXPECTED = '/home/geoff/work/gigMax/tests/mockData/statemen
 import { expect } from 'chai';
 import 'mocha';
 
-describe('mergeAddlDataWithStatement', () => {
-  it('should add additional fields to a trip object', () => {
-    //const statement: object = getJSON(TEST_STATEMENT);
-    //const addlData: object = getJSON(TEST_ADDL_DATA);
-
-    let statementActual = mergeAddlDataWithStatement(TEST_ADDL_DATA, TEST_STATEMENT);
-
-    const { statementExpected } = require(TEST_STATEMENT_EXPECTED);
-    for (let key in statementExpected) {
-      let checkKey = statementActual.hasOwnProperty(key);  
-      let checkValue = statementActual[ key ] == statementExpected[ key ];
-
-      expect(checkKey).to.equal(true);
-      expect(checkValue).to.equal(true);
-    }
-  });
-});
+//describe('mergeAddlDataWithStatement', () => {
+//  it('should add additional fields to a trip object', () => {
+//    //const statement: object = getJSON(TEST_STATEMENT);
+//    //const addlData: object = getJSON(TEST_ADDL_DATA);
+//
+//    let statementActual = mergeAddlDataWithStatement(TEST_ADDL_DATA, TEST_STATEMENT);
+//
+//    const { statementExpected } = require(TEST_STATEMENT_EXPECTED);
+//    for (let key in statementExpected) {
+//      let checkKey = statementActual.hasOwnProperty(key);  
+//      let checkValue = statementActual[ key ] == statementExpected[ key ];
+//
+//      expect(checkKey).to.equal(true);
+//      expect(checkValue).to.equal(true);
+//    }
+//  });
+//});
 describe('getPageDataPathFromTripID', () => {
-  let tripID = '2f00bace-ca58-4e03-9296-8e07549deb9e';
-  let dir = './mockData/pageData/';
+  let tripID = '0f00bace-ca58-4e03-9296-8e07549deb9e';
+  let dir = '/home/geoff/work/gigMax/tests/mockData/pageData/';//'./mockData/pageData/';
   it('should return the absolute path with a valid tripID', () => {
     let pageDataPath = getPageDataPathFromTripID(tripID, dir);
     let expectedPath = dir + tripID + '.json';

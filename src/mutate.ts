@@ -111,6 +111,7 @@ function getIDFromFilePath(filePath) {
   let byPeriod = bySlash[bySlash.length-1].split('.')[0];
   return byPeriod;
 }
+
 function CSVsToJSONs() {
   const csvFilePaths = getFilePathsArray(CSV_DIR);
   for (let csvFilePath of csvFilePaths) {
