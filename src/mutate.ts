@@ -17,7 +17,7 @@ const {
   INCOMPLETE_TRIP_IDS,
   JSON_MERGED_DIR,
 } = require('./uriStore.js');
-const { SELECTORS } = require('./cssSelectors.js');
+const { SELECTORS } = require('./scraper/cssSelectors.js');
 
 (function buildCompleteTripRecord() {
   //populates intermediate/pageData/{tripID}.json with add'l data

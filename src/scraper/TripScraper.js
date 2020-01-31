@@ -14,13 +14,13 @@ const {
   JSON_STATEMENT_DIR,
   JSON_PAGE_DATA_DIR,
   INCOMPLETE_TRIP_HTML_FILE,
-} = require('./uriStore.js');
+} = require('../uriStore.js');
 const { SELECTORS } = require('./cssSelectors.js');
 const {
   CSVsToJSONs,
   getStatementJSONs,
   getAllTripIDsArray
-} = require('./etl.js');
+} = require('../mutate.js');
 
 
 (async function main() {

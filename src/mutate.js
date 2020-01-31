@@ -6,7 +6,7 @@ const papaParse = require('papaparse');
 const path = require('path');
 const fs = require('fs');
 const { BASE_TRIP_URL, STATEMENTS_URL, TRIP_HTML_DIR, CSV_DIR, JSON_STATEMENT_DIR, JSON_PAGE_DATA_DIR, INCOMPLETE_TRIP_IDS, JSON_MERGED_DIR, } = require('./uriStore.js');
-const { SELECTORS } = require('./cssSelectors.js');
+const { SELECTORS } = require('./scraper/cssSelectors.js');
 (function buildCompleteTripRecord() {
     //populates intermediate/pageData/{tripID}.json with add'l data
     //extractDownloadedPageData();
