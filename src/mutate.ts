@@ -31,19 +31,35 @@ function combineExtractedAndCSVData(): void {
   let statementFilePaths: string[] = getFilePathsArray(JSON_STATEMENT_DIR);
   for (let statementFilePath of statementFilePaths) {
     let tripIDs: string[] = getStatementTripIDs(statementFilePath);
-    let statementJSON;
+    let statement: object[] = getJSON(statementFilePath);
     for (let id of tripIDs) {
-      statementJSON = mergeAddlDataWithStatement(id, statementFilePath);
+      // need to find matching trip within statement
+      let addlDataPath: string = getPageDataPathFromTripID(id, JSON_PAGE_DATA_DIR);
+      let addlData: object = getJSON(addlDataPath); 
+      let tripIndex: number = getTripIndex(id, statement);
+      statement[tripIndex] = mergeAddlDataIntoTrip(addlData, statement[tripIndex]);
     }
-    let fileName: string = JSON_MERGED_DIR + `${statementFilePath}`;
-    fs.writeFileSync(fileName, statementJSON);
+    let fileName: string = JSON_MERGED_DIR + `${path.basename(statementFilePath)}`;
+    fs.writeFileSync(fileName, statement);
   }
 }
-function mergeAddlDataWithStatement(tripID: string, statementPath: string): object {
-  let addlDataPath: string = getPageDataPathFromTripID(tripID, JSON_PAGE_DATA_DIR);
-  let addlData: object = getJSON(addlDataPath); 
-  let statement: object = getJSON(statementPath);
-  return mergeJSON.merge(addlData, statement);
+function getTripIndex(tripID: string, statement: object[]): number {
+  let tripIndex = -1;
+  for (let i = 0; i < statement.length ; i++) {
+    if (statement[i]['Trip ID'] == tripID) {
+      tripIndex = i;
+      break;
+    }
+  }
+  return tripIndex;
+}
+function mergeAddlDataIntoTrip(addlData: object, parentTrip: object ): object {
+  //if (!isInStatement(tripID)) {
+  //  console.error(`${tripID} is not in ${statementPath}`);
+  //  return {};
+  //}
+  
+  return mergeJSON.merge(addlData, parentTrip);
 }
 function getPageDataPathFromTripID(tripID: string, dir: string): string {
   let pageDataPaths = getFilePathsArray(dir); 
@@ -55,6 +71,9 @@ function getPageDataPathFromTripID(tripID: string, dir: string): string {
     }
   }
   return matchingPath;
+}
+function isInStatement(tripID: string): boolean {
+  return true;
 }
 function isMatch(tripID: string, pageDataPath: string): boolean {
   let regex = new RegExp(tripID);
@@ -179,11 +198,12 @@ module.exports = {
   CSVsToJSONs,
   getStatementJSONs,
   getAllTripIDsArray,
-  mergeAddlDataWithStatement,
+  mergeAddlDataIntoTrip,
   getJSON,
   getFilePathsArray,
   isMatch,
   getPageDataPathFromTripID,
+  getTripIndex,
 };
 
 

@@ -4,40 +4,56 @@ const fs = require('fs');
 const path = require('path');
 const { 
   getJSON, 
-  mergeAddlDataWithStatement,
+  mergeAddlDataIntoTrip,
   getFilePathsArray,
   isMatch,
+  getTripIndex,
   getPageDataPathFromTripID,
 } = require('/home/geoff/work/gigMax/src/mutate.ts');
 
-const TEST_STATEMENT = '/home/geoff/work/gigMax/tests/mockData/statement_27858537-a9aa-5346-ae05-5f8e1a9ad6c2_date_10_28_2019.json';
-const TEST_ADDL_DATA = '/home/geoff/work/gigMax/tests/mockData/36fafc62-bfed-46db-b4b0-ce3f3fc7427e.json';
-const TEST_STATEMENT_EXPECTED = '/home/geoff/work/gigMax/tests/mockData/statementExpected.js';
+const TEST_STATEMENT = '/home/geoff/work/gigMax/tests/mockData/merge/statement_27858537-a9aa-5346-ae05-5f8e1a9ad6c2_date_10_28_2019.json';
+const TEST_ADDL_DATA = '/home/geoff/work/gigMax/tests/mockData/merge/36fafc62-bfed-46db-b4b0-ce3f3fc7427e.json';
+const TEST_STATEMENT_EXPECTED = '/home/geoff/work/gigMax/tests/mockData/merge/statementExpected.js';
 
 import { expect } from 'chai';
 import 'mocha';
 
-//describe('mergeAddlDataWithStatement', () => {
-//  it('should add additional fields to a trip object', () => {
-//    //const statement: object = getJSON(TEST_STATEMENT);
-//    //const addlData: object = getJSON(TEST_ADDL_DATA);
-//
-//    let statementActual = mergeAddlDataWithStatement(TEST_ADDL_DATA, TEST_STATEMENT);
-//
-//    const { statementExpected } = require(TEST_STATEMENT_EXPECTED);
-//    for (let key in statementExpected) {
-//      let checkKey = statementActual.hasOwnProperty(key);  
-//      let checkValue = statementActual[ key ] == statementExpected[ key ];
-//
-//      expect(checkKey).to.equal(true);
-//      expect(checkValue).to.equal(true);
-//    }
+describe('mergeAddlDataIntoTrip', () => {
+  it('should add additional fields to a trip object', () => {
+    const statement: object = getJSON(TEST_STATEMENT);
+    const addlData: object = getJSON(TEST_ADDL_DATA);
+
+    let statementActual = mergeAddlDataIntoTrip(addlData, statement);
+
+    const { statementExpected } = require(TEST_STATEMENT_EXPECTED);
+    for (let key in statementExpected) {
+      let checkKey = statementActual.hasOwnProperty(key);  
+      let checkValue = statementActual[ key ] == statementExpected[ key ];
+
+      expect(checkKey).to.equal(true);
+      expect(checkValue).to.equal(true);
+    }
+  });
+});
+describe('getTripIndex', () => {
+  let statement: object = getJSON(TEST_STATEMENT);
+  let tripID = '36fafc62-bfed-46db-b4b0-ce3f3fc7427e';
+  it('should return the array index for the associated trip id', () => {
+    let expected = 0;
+    let actual = getTripIndex(tripID, statement);
+    expect(actual).to.equal(expected);
+  });
+});
+//describe('isInStatement', () => {
+//  it('should return true if tripID is in statement', () => {
+//  });
+//  it('should return false if tripID is not in statement', () => {
 //  });
 //});
 describe('getPageDataPathFromTripID', () => {
   let tripID = '0f00bace-ca58-4e03-9296-8e07549deb9e';
   let dir = '/home/geoff/work/gigMax/tests/mockData/pageData/';//'./mockData/pageData/';
-  it('should return the absolute path with a valid tripID', () => {
+  it('should return the absolute path from a valid tripID', () => {
     let pageDataPath = getPageDataPathFromTripID(tripID, dir);
     let expectedPath = dir + tripID + '.json';
     expect(pageDataPath).to.equal(expectedPath);
