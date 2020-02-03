@@ -40,7 +40,7 @@ function combineExtractedAndCSVData(): void {
       statement[tripIndex] = mergeAddlDataIntoTrip(addlData, statement[tripIndex]);
     }
     let fileName: string = JSON_MERGED_DIR + `${path.basename(statementFilePath)}`;
-    fs.writeFileSync(fileName, statement);
+    fs.writeFileSync(fileName, JSON.stringify(statementJSON, null, 4));
   }
 }
 function getTripIndex(tripID: string, statement: object[]): number {

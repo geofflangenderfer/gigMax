@@ -13,25 +13,33 @@ const {
 
 const TEST_STATEMENT = '/home/geoff/work/gigMax/tests/mockData/merge/statement_27858537-a9aa-5346-ae05-5f8e1a9ad6c2_date_10_28_2019.json';
 const TEST_ADDL_DATA = '/home/geoff/work/gigMax/tests/mockData/merge/36fafc62-bfed-46db-b4b0-ce3f3fc7427e.json';
-const TEST_STATEMENT_EXPECTED = '/home/geoff/work/gigMax/tests/mockData/merge/statementExpected.js';
+const TEST_STATEMENT_EXPECTED = '/home/geoff/work/gigMax/tests/mockData/merge/mergedTripExpected.js';
 
 import { expect } from 'chai';
 import 'mocha';
 
 describe('mergeAddlDataIntoTrip', () => {
   it('should add additional fields to a trip object', () => {
-    const statement: object = getJSON(TEST_STATEMENT);
-    const addlData: object = getJSON(TEST_ADDL_DATA);
+    let statement: object[] = getJSON(TEST_STATEMENT);
+    let tripID = '36fafc62-bfed-46db-b4b0-ce3f3fc7427e';
+    let tripIndex: number = getTripIndex(tripID, statement);
+    let addlData: object = getJSON(TEST_ADDL_DATA);
 
-    let statementActual = mergeAddlDataIntoTrip(addlData, statement);
+    let mergedTripActual = mergeAddlDataIntoTrip(addlData, statement[tripIndex]);
 
-    const { statementExpected } = require(TEST_STATEMENT_EXPECTED);
-    for (let key in statementExpected) {
-      let checkKey = statementActual.hasOwnProperty(key);  
-      let checkValue = statementActual[ key ] == statementExpected[ key ];
+    const { mergedTripExpected } = require(TEST_STATEMENT_EXPECTED);
+    //console.log('mergedTripExpected:\n', mergedTripExpected);
+    //console.log('mergedTripActual:\n', mergedTripActual);
+    for (let key in mergedTripExpected) {
+      let checkKey = mergedTripActual.hasOwnProperty(key);  
+      let checkValue = mergedTripActual[ key ] == mergedTripExpected[ key ];
 
-      expect(checkKey).to.equal(true);
-      expect(checkValue).to.equal(true);
+      //expect(checkKey).to.equal(true);
+      //expect(checkValue).to.equal(true);
+      expect(Object.keys(mergedTripActual).length).to.equal(
+        Object.keys(statement[tripIndex]).length 
+        + Object.keys(addlData).length
+      );
     }
   });
 });

@@ -24,7 +24,8 @@ function combineExtractedAndCSVData() {
             statementJSON = mergeAddlDataWithStatement(id, statementFilePath);
         }
         let fileName = JSON_MERGED_DIR + `${statementFilePath}`;
-        fs.writeFileSync(fileName, statementJSON);
+        fs.writeFileSync(fileName, JSON.stringify(statementJSON, null, 4));
+
     }
 }
 function mergeAddlDataWithStatement(tripID, statementPath) {
