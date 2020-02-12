@@ -9,6 +9,7 @@ const {
   isMatch,
   getTripIndex,
   getPageDataPathFromTripID,
+  stripBom,
 } = require('/home/geoff/work/gigMax/src/mutate.ts');
 
 const TEST_STATEMENT = '/home/geoff/work/gigMax/tests/mockData/merge/statement_27858537-a9aa-5346-ae05-5f8e1a9ad6c2_date_10_28_2019.json';
@@ -19,32 +20,46 @@ import { expect } from 'chai';
 import 'mocha';
 
 describe('mergeAddlDataIntoTrip', () => {
+  // error is happening because <FEFF> is invisible, which causes string comparison to fail. Check out 
+  //https://stackoverflow.com/search?q=byte+order+mark
   it('should add additional fields to a trip object', () => {
     let statement: object[] = getJSON(TEST_STATEMENT);
     let tripID = '36fafc62-bfed-46db-b4b0-ce3f3fc7427e';
     let tripIndex: number = getTripIndex(tripID, statement);
     let addlData: object = getJSON(TEST_ADDL_DATA);
 
+    //console.log("addlData:\n", addlData) 
+    //console.log("statement[tripIndex]:\n", statement[tripIndex]);
     let mergedTripActual = mergeAddlDataIntoTrip(addlData, statement[tripIndex]);
+    console.log("mergedTripActual['Driver Name']: ", mergedTripActual['Driver Name']);
+    
+    //console.log("Object.entries(mergedTripActual):\n", Object.entries(mergedTripActual));
+
+    //console.log("Object.keys(mergedTripActual):\n", Object.keys(mergedTripActual));
 
     const { mergedTripExpected } = require(TEST_STATEMENT_EXPECTED);
-    //console.log('mergedTripExpected:\n', mergedTripExpected);
+    //console.log('mergedTripExpected["Driver Name"]:\n', mergedTripExpected["Driver Name"]);
     //console.log('mergedTripActual:\n', mergedTripActual);
     for (let key in mergedTripExpected) {
       let checkKey = mergedTripActual.hasOwnProperty(key);  
       let checkValue = mergedTripActual[ key ] == mergedTripExpected[ key ];
+      if (!checkKey || !checkValue) {
+        //console.log("key:", key, "\nactual value:", mergedTripActual[key]);
+        //console.log("\nexpected value:", mergedTripExpected[key]);
+      }
 
-      //expect(checkKey).to.equal(true);
-      //expect(checkValue).to.equal(true);
-      expect(Object.keys(mergedTripActual).length).to.equal(
-        Object.keys(statement[tripIndex]).length 
-        + Object.keys(addlData).length
-      );
+      expect(checkKey).to.equal(true);
+      expect(checkValue).to.equal(true);
     }
+    expect(Object.keys(mergedTripActual).length).to.equal(
+      Object.keys(statement[tripIndex]).length 
+      + Object.keys(addlData).length
+    );
   });
 });
+
 describe('getTripIndex', () => {
-  let statement: object = getJSON(TEST_STATEMENT);
+  let statement: object[] = getJSON(TEST_STATEMENT);
   let tripID = '36fafc62-bfed-46db-b4b0-ce3f3fc7427e';
   it('should return the array index for the associated trip id', () => {
     let expected = 0;
@@ -101,6 +116,24 @@ describe('getFilePathsArray', () => {
     // 52 files in dummy directory
     let returnedPaths: string[] = getFilePathsArray(dir)
     expect(returnedPaths.length).to.equal(52);
+  });
+});
+describe('stripBom', () => {
+  let testFile: object[] = getJSON(TEST_STATEMENT);  
+  const { mergedTripExpected } = require(TEST_STATEMENT_EXPECTED);
+  it('should remove byte order mark from trip entries', () => {
+    let actual: object[] = stripBom(TEST_STATEMENT);
+    let expectedKeys = Object.keys(mergedTripExpected);
+    for (let key in expectedKeys) {
+      for (let i = 0; i < actual.length ; i++) {
+        let checkKey = actual[i].hasOwnProperty(key);  
+        let checkValue = actual[i][key] === testFile[i][key];
+
+        expect(checkKey).to.equal(true);
+        expect(checkValue).to.equal(true);
+        
+      }
+    }
   });
 });
 //describe('', () => {

@@ -25,6 +25,9 @@ Using these heatmaps, drivers can decide where/when they want to work in order t
 - converting codebased to typescript
   - I had to learn typescript and various OOP concepts
 - My uncertainty about breaking already written code may be discouraging me from working on the project. I feel that anxiety and it makes me want to do something else. This is a good reason to write tests and add types. 
+- ran into the [byte order mark][0] when trying to parse JSON trip files. Created stripBom function to remove it. 
+
+[0]: https://en.wikipedia.org/wiki/Byte_order_mark
 ## What mistakes did you make? Would you do anything different?
 - didn't fully explore the website manually: I ran into a dead-end with one approach to get all the trip data and got discouraged. I thought about scrapping the project. Then, I manually browsed the website again and found the current approach to grabbing relevant data. If I had given up early, I would have missed the current approach.  
 

@@ -40,7 +40,7 @@ function combineExtractedAndCSVData(): void {
       statement[tripIndex] = mergeAddlDataIntoTrip(addlData, statement[tripIndex]);
     }
     let fileName: string = JSON_MERGED_DIR + `${path.basename(statementFilePath)}`;
-    fs.writeFileSync(fileName, JSON.stringify(statementJSON, null, 4));
+    fs.writeFileSync(fileName, JSON.stringify(statement, null, 4));
   }
 }
 function getTripIndex(tripID: string, statement: object[]): number {
@@ -137,6 +137,18 @@ function CSVsToJSONs() {
     saveCsvToJson(csvFilePath);
   }
 }
+function stripBom(jsonPath: string): object[] {
+  let json: object[] = getJSON(jsonPath);
+  for (let trip of json) {
+    Object.keys(trip).forEach(key => {
+      if (key.charCodeAt(0) === 0xFEFF) {
+        trip[key.slice(1)] = trip[key];
+        delete trip[key];
+      }
+    });
+  }
+  return json;
+}
 function saveCsvToJson(csvFilePath) {
   let csvFileNames = fs.readFileSync(csvFilePath, 'utf8');
   let jsonFilePath = csvFilePathToJsonFilePath(csvFilePath);
@@ -179,7 +191,7 @@ function getStatementJSONs() {
   ));
   return statementJSONs;
 }
-function getJSON(jsonPath) {
+function getJSON(jsonPath: string): object[] {
   return JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
 }
 //function buildStatementTripIDsStore() {
@@ -204,6 +216,7 @@ module.exports = {
   isMatch,
   getPageDataPathFromTripID,
   getTripIndex,
+  stripBom,
 };
 
 
