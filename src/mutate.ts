@@ -140,12 +140,12 @@ function CSVsToJSONs() {
 function stripBom(jsonPath: string): object[] {
   let json: object[] = getJSON(jsonPath);
   for (let trip of json) {
-    Object.keys(trip).forEach(key => {
+    for (let key of Object.keys(trip)) {
       if (key.charCodeAt(0) === 0xFEFF) {
         trip[key.slice(1)] = trip[key];
         delete trip[key];
       }
-    });
+    }  
   }
   return json;
 }

@@ -12,7 +12,9 @@ const {
   stripBom,
 } = require('/home/geoff/work/gigMax/src/mutate.ts');
 
-const TEST_STATEMENT = '/home/geoff/work/gigMax/tests/mockData/merge/statement_27858537-a9aa-5346-ae05-5f8e1a9ad6c2_date_10_28_2019.json';
+const TEST_STATEMENT = '/home/geoff/work/gigMax/tests/mockData/merge/initial_statement.json';
+const TEST_STATEMENT_NO_BOM = '/home/geoff/work/gigMax/tests/mockData/merge/expected_statement.json';
+
 const TEST_ADDL_DATA = '/home/geoff/work/gigMax/tests/mockData/merge/36fafc62-bfed-46db-b4b0-ce3f3fc7427e.json';
 const TEST_STATEMENT_EXPECTED = '/home/geoff/work/gigMax/tests/mockData/merge/mergedTripExpected.js';
 
@@ -119,23 +121,28 @@ describe('getFilePathsArray', () => {
   });
 });
 describe('stripBom', () => {
-  let testFile: object[] = getJSON(TEST_STATEMENT);  
-  const { mergedTripExpected } = require(TEST_STATEMENT_EXPECTED);
-  it('should remove byte order mark from trip entries', () => {
-    let actual: object[] = stripBom(TEST_STATEMENT);
-    let expectedKeys = Object.keys(mergedTripExpected);
-    for (let key in expectedKeys) {
-      for (let i = 0; i < actual.length ; i++) {
-        let checkKey = actual[i].hasOwnProperty(key);  
-        let checkValue = actual[i][key] === testFile[i][key];
-
-        expect(checkKey).to.equal(true);
-        expect(checkValue).to.equal(true);
-        
-      }
-    }
+  it('should return trips after stripping BOM', () => {
+    expect(stripBom(TEST_STATEMENT)).to.deep.equal(getJSON(TEST_STATEMENT_NO_BOM))
   });
 });
+//describe('stripBom', () => {
+//  let testFile: object[] = getJSON(TEST_STATEMENT);  
+//  const { mergedTripExpected } = require(TEST_STATEMENT_EXPECTED);
+//  it('should remove byte order mark from trip entries', () => {
+//    let actual: object[] = stripBom(TEST_STATEMENT);
+//    let expectedKeys = Object.keys(mergedTripExpected);
+//    for (let key in expectedKeys) {
+//      for (let i = 0; i < actual.length ; i++) {
+//        let checkKey = actual[i].hasOwnProperty(key);  
+//        let checkValue = actual[i][key] === testFile[i][key];
+//
+//        expect(checkKey).to.equal(true);
+//        expect(checkValue).to.equal(true);
+//        
+//      }
+//    }
+//  });
+//});
 //describe('', () => {
 //  it('', () => {
 //  });
