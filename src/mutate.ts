@@ -20,14 +20,23 @@ const {
 const { SELECTORS } = require('./scraper/cssSelectors.js');
 
 (function buildCompleteTripRecord() {
-  //populates intermediate/pageData/{tripID}.json with add'l data
   //extractDownloadedPageData();
-  //combines intermediate/pageData/{tripID}.json 
-  //and intermediate/statementsJSON/statements_{tripID}.json
   //combineExtractedAndCSVData();
-  //buildStatementTripIDsStore();
 })();
+function extractDownloadedPageData() {
+  let htmlFilePaths = getFilePathsArray(TRIP_HTML_DIR);
+  for (let path of htmlFilePaths) {
+    let pageDataObject = extractPageDataSync(path);
+    if (isEmpty(pageDataObject)) { 
+      fs.appendFileSync(INCOMPLETE_TRIP_IDS, path);
+    }
+    let tripID = getIDFromFilePath(path);
+    let jsonFilePath = `${JSON_PAGE_DATA_DIR}/${tripID}.json`;
+    fs.writeFileSync(jsonFilePath, JSON.stringify(pageDataObject, null, 4)) 
+  }
+}
 function combineExtractedAndCSVData(): void {
+  CSVsToJSONs();
   let statementFilePaths: string[] = getFilePathsArray(JSON_STATEMENT_DIR);
   for (let statementFilePath of statementFilePaths) {
     let tripIDs: string[] = getStatementTripIDs(statementFilePath);
@@ -80,18 +89,6 @@ function isMatch(tripID: string, pageDataPath: string): boolean {
   let stringMatch = pageDataPath.match(regex);
   return stringMatch != null && stringMatch[0] != '';
 }
-function extractDownloadedPageData() {
-  let htmlFilePaths = getFilePathsArray(TRIP_HTML_DIR);
-  for (let path of htmlFilePaths) {
-    let pageDataObject = extractPageDataSync(path);
-    if (isEmpty(pageDataObject)) { 
-      fs.appendFileSync(INCOMPLETE_TRIP_IDS, path);
-    }
-    let tripID = getIDFromFilePath(path);
-    let jsonFilePath = `${JSON_PAGE_DATA_DIR}/${tripID}.json`;
-    fs.writeFileSync(jsonFilePath, JSON.stringify(pageDataObject, null, 4)) 
-  }
-}
 function getFilePathsArray(directory: string): string[] {
   const files = fs.readdirSync(directory);
   let paths = [];
@@ -131,11 +128,23 @@ function getIDFromFilePath(filePath) {
   return byPeriod;
 }
 
-function CSVsToJSONs() {
+function CSVsToJSONs(): void {
   const csvFilePaths = getFilePathsArray(CSV_DIR);
   for (let csvFilePath of csvFilePaths) {
     saveCsvToJson(csvFilePath);
   }
+}
+function saveCsvToJson(csvFilePath: string): void {
+  let csvFileNames = fs.readFileSync(csvFilePath, 'utf8');
+  let jsonFilePath = csvFilePathToJsonFilePath(csvFilePath);
+  papaParse.parse(csvFileNames, {
+    header: true,
+    //dynamicTyping: true,
+    skipEmptyLines: true,
+    complete: (results) => ( 
+      fs.writeFileSync(jsonFilePath, JSON.stringify(results.data, null, 4)) 
+    )
+  });
 }
 function stripBom(jsonPath: string): object[] {
   let json: object[] = getJSON(jsonPath);
@@ -148,18 +157,6 @@ function stripBom(jsonPath: string): object[] {
     }  
   }
   return json;
-}
-function saveCsvToJson(csvFilePath) {
-  let csvFileNames = fs.readFileSync(csvFilePath, 'utf8');
-  let jsonFilePath = csvFilePathToJsonFilePath(csvFilePath);
-  papaParse.parse(csvFileNames, {
-    header: true,
-    //dynamicTyping: true,
-    skipEmptyLines: true,
-    complete: (results) => ( 
-      fs.writeFileSync(jsonFilePath, JSON.stringify(results.data, null, 4)) 
-    )
-  });
 }
 function csvFilePathToJsonFilePath(csvFilePath) {
   let splitPath = csvFilePath.split("/");
@@ -194,17 +191,6 @@ function getStatementJSONs() {
 function getJSON(jsonPath: string): object[] {
   return JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
 }
-//function buildStatementTripIDsStore() {
-//  // need to build hashmap tripID -> statementPath
-//  let statementPaths = getFilePathsArray(JSON_STATEMENT_DIR);
-//  let store = {};
-//  for (let path of statementPaths) {
-//    let key = path.split("/")[3];
-//    let store[key] = getStatementTripIDs(path);
-//  }
-//  console.log(store);
-//  fs.writeFileSync('./data/intermediate/statementTripIDStore.json', store);
-//}
 
 module.exports = {
   CSVsToJSONs,
