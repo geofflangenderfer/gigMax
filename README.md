@@ -26,6 +26,11 @@ Using these heatmaps, drivers can decide where/when they want to work in order t
   - I had to learn typescript and various OOP concepts
 - My uncertainty about breaking already written code may be discouraging me from working on the project. I feel that anxiety and it makes me want to do something else. This is a good reason to write tests and add types. 
 - ran into the [byte order mark][0] when trying to parse JSON trip files. Created stripBom function to remove it. 
+- writing tests after functions was confusing. I had to spend time figuring out:
+  - if all functions had tests
+  - whether a function was called
+  I'm curious how writing tests first will differ.
+
 
 [0]: https://en.wikipedia.org/wiki/Byte_order_mark
 ## What mistakes did you make? Would you do anything different?
