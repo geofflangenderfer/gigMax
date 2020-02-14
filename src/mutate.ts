@@ -142,12 +142,14 @@ function saveCsvToJson(csvFilePath: string): void {
     //dynamicTyping: true,
     skipEmptyLines: true,
     complete: (results) => ( 
-      fs.writeFileSync(jsonFilePath, JSON.stringify(results.data, null, 4)) 
+      fs.writeFileSync(
+        jsonFilePath,
+        JSON.stringify(stripBom(results.data), null, 4)
+      ) 
     )
   });
 }
-function stripBom(jsonPath: string): object[] {
-  let json: object[] = getJSON(jsonPath);
+function stripBom(json: object[]): object[] {
   for (let trip of json) {
     for (let key of Object.keys(trip)) {
       if (key.charCodeAt(0) === 0xFEFF) {

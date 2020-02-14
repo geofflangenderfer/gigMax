@@ -27,18 +27,18 @@ const TEST_STATEMENT_EXPECTED = '/home/geoff/work/gigMax/tests/mockData/merge/me
 import { expect } from 'chai';
 import 'mocha';
 
-//describe('mergeAddlDataIntoTrip', () => {
-//  it('should add additional fields to a trip object', () => {
-//    //let statement: object[] = stripBom(INIT_TEST_STATEMENT);
-//    let tripID = '36fafc62-bfed-46db-b4b0-ce3f3fc7427e';
-//    let tripIndex: number = getTripIndex(tripID, statement);
-//    let addlData: object = getJSON(TEST_ADDL_DATA);
-//    let { mergedTripExpected } = require(TEST_STATEMENT_EXPECTED);
-//
-//    let mergedTripActual = mergeAddlDataIntoTrip(addlData, statement[tripIndex]);
-//    expect(mergedTripActual).to.deep.equal(mergedTripExpected);
-//  });
-//});
+describe('mergeAddlDataIntoTrip', () => {
+  it('should add additional fields to a trip object', () => {
+    //let statement: object[] = stripBom(INIT_TEST_STATEMENT);
+    let tripID = '36fafc62-bfed-46db-b4b0-ce3f3fc7427e';
+    let tripIndex: number = getTripIndex(tripID, statement);
+    let addlData: object = getJSON(TEST_ADDL_DATA);
+    let { mergedTripExpected } = require(TEST_STATEMENT_EXPECTED);
+
+    let mergedTripActual = mergeAddlDataIntoTrip(addlData, statement[tripIndex]);
+    expect(mergedTripActual).to.deep.equal(mergedTripExpected);
+  });
+});
 
 describe('getTripIndex', () => {
   let statement: object[] = getJSON(INIT_TEST_STATEMENT);
@@ -100,11 +100,11 @@ describe('getFilePathsArray', () => {
     expect(returnedPaths.length).to.equal(52);
   });
 });
-describe.only('stripBom', () => {
+describe('stripBom', () => {
   // need to reconcile stripBom's json path input and need for object input
   //https://stackoverflow.com/search?q=byte+order+mark
   it('should return trips after stripping BOM', () => {
-    expect(stripBom()).to.deep.equal(getJSON(TEST_STATEMENT_NO_BOM))
+    expect(stripBom(getJSON(INIT_TEST_STATEMENT))).to.deep.equal(getJSON(TEST_STATEMENT_NO_BOM))
   });
 });
 //describe('extractPageDataSync', () => {
@@ -124,10 +124,6 @@ describe.only('stripBom', () => {
 //  });
 //});
 //describe('getJSON', () => {
-//  it('', () => {
-//  });
-//});
-//describe('CSVsToJSONs', () => {
 //  it('', () => {
 //  });
 //});
