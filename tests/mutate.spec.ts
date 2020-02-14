@@ -107,10 +107,13 @@ describe('stripBom', () => {
     expect(stripBom(getJSON(INIT_TEST_STATEMENT))).to.deep.equal(getJSON(TEST_STATEMENT_NO_BOM))
   });
 });
-//describe('extractPageDataSync', () => {
-//  it('', () => {
-//  });
-//});
+describe.only('extractPageDataSync', () => {
+  it('should take .html file path and return json with extracted data', () => {
+    let htmlPath = '/home/geoff/work/gigMax/tests/mockData/extractPageDataSync_mock/00a326bd-1806-4292-a8f9-d295ba2bd9b9.html';
+    let expectedJsonPath = '/home/geoff/work/gigMax/tests/mockData/extractPageDataSync_mock/result.json';
+    expect(extractPageDataSync(htmlPath)).to.deep.equal(getJSON(expectedJsonPath));
+  });
+});
 //describe('isEmpty', () => {
 //  it('', () => {
 //  });

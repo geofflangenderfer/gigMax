@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 const cheerio = require('cheerio');
-const puppeteer = require('puppeteer');
 const papaParse = require('papaparse');
 const path = require('path');
 const fs = require('fs'); 
@@ -201,6 +200,7 @@ module.exports = {
   isMatch,
   getPageDataPathFromTripID,
   getTripIndex,
+  extractPageDataSync,
   stripBom,
 };
 
