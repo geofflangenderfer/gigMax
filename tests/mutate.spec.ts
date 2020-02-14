@@ -29,7 +29,7 @@ import 'mocha';
 
 describe('mergeAddlDataIntoTrip', () => {
   it('should add additional fields to a trip object', () => {
-    //let statement: object[] = stripBom(INIT_TEST_STATEMENT);
+    let statement: object[] = stripBom(getJSON( INIT_TEST_STATEMENT ));
     let tripID = '36fafc62-bfed-46db-b4b0-ce3f3fc7427e';
     let tripIndex: number = getTripIndex(tripID, statement);
     let addlData: object = getJSON(TEST_ADDL_DATA);

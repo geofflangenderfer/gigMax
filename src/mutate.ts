@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-const mergeJSON = require('merge-json');
 const cheerio = require('cheerio');
 const puppeteer = require('puppeteer');
 const papaParse = require('papaparse');
@@ -23,7 +22,7 @@ const { SELECTORS } = require('./scraper/cssSelectors.js');
   //extractDownloadedPageData();
   //combineExtractedAndCSVData();
 })();
-function extractDownloadedPageData() {
+function extractDownloadedPageData(): void {
   let htmlFilePaths = getFilePathsArray(TRIP_HTML_DIR);
   for (let path of htmlFilePaths) {
     let pageDataObject = extractPageDataSync(path);
@@ -63,12 +62,10 @@ function getTripIndex(tripID: string, statement: object[]): number {
   return tripIndex;
 }
 function mergeAddlDataIntoTrip(addlData: object, parentTrip: object ): object {
-  //if (!isInStatement(tripID)) {
-  //  console.error(`${tripID} is not in ${statementPath}`);
-  //  return {};
-  //}
-  
-  return mergeJSON.merge(addlData, parentTrip);
+  for (let key in addlData) {
+    parentTrip[key] = addlData[key];
+  }
+  return parentTrip;
 }
 function getPageDataPathFromTripID(tripID: string, dir: string): string {
   let pageDataPaths = getFilePathsArray(dir); 
