@@ -44,6 +44,9 @@ Using these heatmaps, drivers can decide where/when they want to work in order t
 
 ## What tech stack did you use? Why?
 
+## What did you learn?
+- TDD is pleasant. When you load up your IDE, it's easy to see where you left off by running the tests and moving to the first failing one. Gone are the times I open up my editor and have no idea where to start or where I left off. There is reduced uncertainty and anxiety when working on a small, defined goal compared to a complex one. 
+- Typescript increases my productivity. The compiler has meaningful error messages that reduce my time debugging.
 ## How can I get a demo of this project?
 - build from source (give instructions)
 - npm i __
