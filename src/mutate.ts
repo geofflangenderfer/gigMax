@@ -211,6 +211,7 @@ module.exports = {
   extractPageDataSync,
   isFailedScrape,
   getIncompleteTrips,
+  getIDFromFilePath,
   stripBom,
 };
 

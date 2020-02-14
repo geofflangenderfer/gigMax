@@ -120,10 +120,13 @@ describe('isFailedScrape', () => {
     expect(isFailedScrape(failedJson)).to.equal(true);
   });
 });
-//describe('getIDFromFilePath', () => {
-//  it('', () => {
-//  });
-//});
+describe.only('getIDFromFilePath', () => {
+  let htmlPath = '/home/geoff/work/gigMax/tests/mockData/getIDFromFilePath/00a326bd-1806-4292-a8f9-d295ba2bd9b9.html0';
+  let tripID = '00a326bd-1806-4292-a8f9-d295ba2bd9b9';
+  it('should return a tripID associated with a html file path', () => {
+    expect(getIDFromFilePath(htmlPath)).to.equal(tripID);
+  });
+});
 //describe('getStatementTripIDs', () => {
 //  it('', () => {
 //  });
