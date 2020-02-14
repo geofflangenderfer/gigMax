@@ -20,15 +20,17 @@ const { SELECTORS } = require('./scraper/cssSelectors.js');
 (function buildCompleteTripRecord() {
   //extractDownloadedPageData();
   //combineExtractedAndCSVData();
+  //showIncompleteTrips();
 })();
 function extractDownloadedPageData(): void {
-  let htmlFilePaths = getFilePathsArray(TRIP_HTML_DIR);
+  let htmlFilePaths: string[] = getFilePathsArray(TRIP_HTML_DIR);
   for (let path of htmlFilePaths) {
-    let pageDataObject = extractPageDataSync(path);
-    if (isEmpty(pageDataObject)) { 
+    let pageDataObject: object = extractPageDataSync(path);
+    if (isFailedScrape(pageDataObject)) { 
       fs.appendFileSync(INCOMPLETE_TRIP_IDS, path);
+      continue;
     }
-    let tripID = getIDFromFilePath(path);
+    let tripID: string = getIDFromFilePath(path);
     let jsonFilePath = `${JSON_PAGE_DATA_DIR}/${tripID}.json`;
     fs.writeFileSync(jsonFilePath, JSON.stringify(pageDataObject, null, 4)) 
   }
@@ -49,6 +51,12 @@ function combineExtractedAndCSVData(): void {
     let fileName: string = JSON_MERGED_DIR + `${path.basename(statementFilePath)}`;
     fs.writeFileSync(fileName, JSON.stringify(statement, null, 4));
   }
+}
+function showIncompleteTrips() {
+  console.log("Failed to Scrape tripIDs:\n", getIncompleteTrips());
+}
+function getIncompleteTrips() {
+  
 }
 function getTripIndex(tripID: string, statement: object[]): number {
   let tripIndex = -1;
@@ -102,10 +110,10 @@ function extractPageDataSync(filePath: string): object {
   }
   return json;
 }
-function isEmpty(json) {
-  let keysCondition = Object.keys(json).length == 7;
-  let valuesCondition = Object.values(json)
-    .filter(value => value == '')
+function isFailedScrape(json: object): boolean  {
+  let keysCondition: boolean = Object.keys(json).length == 7;
+  let valuesCondition: boolean = Object.values(json)
+    .filter(value => value === '')
     .length == 7;
   return keysCondition && valuesCondition;
 }
@@ -118,7 +126,7 @@ function extractPageDataWithSelector(html: string, selectors: string[]): string 
   }
   return data;
 }
-function getIDFromFilePath(filePath) {
+function getIDFromFilePath(filePath: string): string {
   let bySlash = filePath.split('/');
   let byPeriod = bySlash[bySlash.length-1].split('.')[0];
   return byPeriod;
@@ -201,6 +209,8 @@ module.exports = {
   getPageDataPathFromTripID,
   getTripIndex,
   extractPageDataSync,
+  isFailedScrape,
+  getIncompleteTrips,
   stripBom,
 };
 

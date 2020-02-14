@@ -13,7 +13,8 @@ const {
   stripBom,
   saveCsvToJson,
   extractPageDataSync, 
-  isEmpty, 
+  getIncompleteTrips,
+  isFailedScrape, 
   getIDFromFilePath, 
   getStatementTripIDs,
   CSVsToJSONs,
@@ -49,12 +50,6 @@ describe('getTripIndex', () => {
     expect(actual).to.equal(expected);
   });
 });
-//describe('isInStatement', () => {
-//  it('should return true if tripID is in statement', () => {
-//  });
-//  it('should return false if tripID is not in statement', () => {
-//  });
-//});
 describe('getPageDataPathFromTripID', () => {
   let tripID = '0f00bace-ca58-4e03-9296-8e07549deb9e';
   let dir = '/home/geoff/work/gigMax/tests/mockData/pageData/';//'./mockData/pageData/';
@@ -86,7 +81,7 @@ describe('isMatch', () => {
   });
 });
 describe('getFilePathsArray', () => {
-  let dir = '/home/geoff/work/gigMax/tests/mockData/pageData';//'./mockData/pageData/';
+  let dir = '/home/geoff/work/gigMax/tests/mockData/pageData';
   it('should return absolute filepaths with valid input', () => {
     let returnedPaths: string[] = getFilePathsArray(dir)
     for (let filePath of returnedPaths) {
@@ -101,23 +96,30 @@ describe('getFilePathsArray', () => {
   });
 });
 describe('stripBom', () => {
-  // need to reconcile stripBom's json path input and need for object input
-  //https://stackoverflow.com/search?q=byte+order+mark
   it('should return trips after stripping BOM', () => {
     expect(stripBom(getJSON(INIT_TEST_STATEMENT))).to.deep.equal(getJSON(TEST_STATEMENT_NO_BOM))
   });
 });
-describe.only('extractPageDataSync', () => {
+describe('extractPageDataSync', () => {
   it('should take .html file path and return json with extracted data', () => {
     let htmlPath = '/home/geoff/work/gigMax/tests/mockData/extractPageDataSync_mock/00a326bd-1806-4292-a8f9-d295ba2bd9b9.html';
     let expectedJsonPath = '/home/geoff/work/gigMax/tests/mockData/extractPageDataSync_mock/result.json';
     expect(extractPageDataSync(htmlPath)).to.deep.equal(getJSON(expectedJsonPath));
   });
 });
-//describe('isEmpty', () => {
-//  it('', () => {
-//  });
-//});
+describe('isFailedScrape', () => {
+  let failedJsonPath = '/home/geoff/work/gigMax/tests/mockData/isFailedScrape_mock/failed.json';
+  let successfulJsonPath = '/home/geoff/work/gigMax/tests/mockData/isFailedScrape_mock/successful.json';
+  let failedJson = getJSON(failedJsonPath);
+  let successfulJson = getJSON(successfulJsonPath);
+
+  it("should identify successful scrape", () => {
+    expect(isFailedScrape(successfulJson)).to.equal(false);
+  });
+  it("should identify failed scrape as an object with 7 blank values", () => {
+    expect(isFailedScrape(failedJson)).to.equal(true);
+  });
+});
 //describe('getIDFromFilePath', () => {
 //  it('', () => {
 //  });
@@ -134,7 +136,17 @@ describe.only('extractPageDataSync', () => {
 //  it('', () => {
 //  });
 //});
+//describe('getIncompleteTrips', () => {
+//  it('', () => {
+//  });
+//});
 //describe('', () => {
 //  it('', () => {
+//  });
+//});
+//describe('isInStatement', () => {
+//  it('should return true if tripID is in statement', () => {
+//  });
+//  it('should return false if tripID is not in statement', () => {
 //  });
 //});
