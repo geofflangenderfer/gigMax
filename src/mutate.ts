@@ -212,6 +212,7 @@ module.exports = {
   isFailedScrape,
   getIncompleteTrips,
   getIDFromFilePath,
+  getStatementTripIDs,
   stripBom,
 };
 

@@ -120,17 +120,20 @@ describe('isFailedScrape', () => {
     expect(isFailedScrape(failedJson)).to.equal(true);
   });
 });
-describe.only('getIDFromFilePath', () => {
+describe('getIDFromFilePath', () => {
   let htmlPath = '/home/geoff/work/gigMax/tests/mockData/getIDFromFilePath/00a326bd-1806-4292-a8f9-d295ba2bd9b9.html0';
   let tripID = '00a326bd-1806-4292-a8f9-d295ba2bd9b9';
   it('should return a tripID associated with a html file path', () => {
     expect(getIDFromFilePath(htmlPath)).to.equal(tripID);
   });
 });
-//describe('getStatementTripIDs', () => {
-//  it('', () => {
-//  });
-//});
+describe('getStatementTripIDs', () => {
+  let statementPath = '/home/geoff/work/gigMax/tests/mockData/getStatementTripIDs/statement_27858537-a9aa-5346-ae05-5f8e1a9ad6c2_date_10_28_2019.json';
+  const { expectedTripIDs } = require('./mockData/getStatementTripIDs/tripIDs.js');
+  it('should return the tripIDs for a given statement json path', () => {
+    expect(getStatementTripIDs(statementPath)).to.deep.equal(expectedTripIDs);
+  });
+});
 //describe('getJSON', () => {
 //  it('', () => {
 //  });
