@@ -22,7 +22,7 @@ const { SELECTORS } = require('./scraper/cssSelectors.js');
   //combineExtractedAndCSVData();
   //showIncompleteTrips();
 })();
-function extractDownloadedPageData(): void {
+function extractDownloadedPageData() {
   let htmlFilePaths: string[] = getFilePathsArray(TRIP_HTML_DIR);
   for (let path of htmlFilePaths) {
     let pageDataObject: object = extractPageDataSync(path);
@@ -35,7 +35,7 @@ function extractDownloadedPageData(): void {
     fs.writeFileSync(jsonFilePath, JSON.stringify(pageDataObject, null, 4)) 
   }
 }
-function combineExtractedAndCSVData(): void {
+function combineExtractedAndCSVData() {
   CSVsToJSONs();
   let statementFilePaths: string[] = getFilePathsArray(JSON_STATEMENT_DIR);
   for (let statementFilePath of statementFilePaths) {
