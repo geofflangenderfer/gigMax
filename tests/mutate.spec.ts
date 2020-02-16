@@ -134,10 +134,16 @@ describe('getStatementTripIDs', () => {
     expect(getStatementTripIDs(statementPath)).to.deep.equal(expectedTripIDs);
   });
 });
-//describe('getJSON', () => {
-//  it('', () => {
-//  });
-//});
+describe.only('getJSON', () => {
+  it('should take a string path and return an array of trip objects', () => {
+  console.log("number of trips: ", getJSON(INIT_TEST_STATEMENT).length );
+    let json: object[] = getJSON(INIT_TEST_STATEMENT);
+    expect(json instanceof Array).to.equal(true);
+    for (let trip of json) {
+      expect(trip instanceof Object).to.equal(true);
+    }
+  });
+});
 //describe('saveCsvToJson', () => {
 //  it('', () => {
 //  });
