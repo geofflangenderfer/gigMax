@@ -135,19 +135,21 @@ function getIDFromFilePath(filePath: string): string {
 function CSVsToJSONs(): void {
   const csvFilePaths = getFilePathsArray(CSV_DIR);
   for (let csvFilePath of csvFilePaths) {
-    saveCsvToJson(csvFilePath);
+    saveCsvToJson(
+      csvFilePath, 
+      csvFilePathToJsonFilePath(csvFilePath)
+    );
   }
 }
-function saveCsvToJson(csvFilePath: string): void {
+function saveCsvToJson(csvFilePath: string, saveLocation: string): void {
   let csvFileNames = fs.readFileSync(csvFilePath, 'utf8');
-  let jsonFilePath = csvFilePathToJsonFilePath(csvFilePath);
   papaParse.parse(csvFileNames, {
     header: true,
     //dynamicTyping: true,
     skipEmptyLines: true,
     complete: (results) => ( 
       fs.writeFileSync(
-        jsonFilePath,
+        saveLocation,
         JSON.stringify(stripBom(results.data), null, 4)
       ) 
     )
@@ -164,7 +166,7 @@ function stripBom(json: object[]): object[] {
   }
   return json;
 }
-function csvFilePathToJsonFilePath(csvFilePath) {
+function csvFilePathToJsonFilePath(csvFilePath: string): string {
   let splitPath = csvFilePath.split("/");
   let jsonPart = splitPath[splitPath.length - 1].split(".")[0] + ".json";
   return path.join(JSON_STATEMENT_DIR, jsonPart); 
@@ -213,6 +215,8 @@ module.exports = {
   getIncompleteTrips,
   getIDFromFilePath,
   getStatementTripIDs,
+  saveCsvToJson,
+  csvFilePathToJsonFilePath,
   stripBom,
 };
 

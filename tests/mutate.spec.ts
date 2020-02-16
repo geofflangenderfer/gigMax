@@ -13,6 +13,7 @@ const {
   stripBom,
   saveCsvToJson,
   extractPageDataSync, 
+  csvFilePathToJsonFilePath,
   getIncompleteTrips,
   isFailedScrape, 
   getIDFromFilePath, 
@@ -20,6 +21,7 @@ const {
   CSVsToJSONs,
 } = require('/home/geoff/work/gigMax/src/mutate.ts');
 
+const { JSON_STATEMENT_DIR } = require('/home/geoff/work/gigMax/src/uriStore.js');
 const INIT_TEST_STATEMENT = '/home/geoff/work/gigMax/tests/mockData/merge/initial_statement.json';
 const TEST_STATEMENT_NO_BOM = '/home/geoff/work/gigMax/tests/mockData/merge/expected_statement.json';
 const TEST_ADDL_DATA = '/home/geoff/work/gigMax/tests/mockData/merge/36fafc62-bfed-46db-b4b0-ce3f3fc7427e.json';
@@ -134,9 +136,8 @@ describe('getStatementTripIDs', () => {
     expect(getStatementTripIDs(statementPath)).to.deep.equal(expectedTripIDs);
   });
 });
-describe.only('getJSON', () => {
+describe('getJSON', () => {
   it('should take a string path and return an array of trip objects', () => {
-  console.log("number of trips: ", getJSON(INIT_TEST_STATEMENT).length );
     let json: object[] = getJSON(INIT_TEST_STATEMENT);
     expect(json instanceof Array).to.equal(true);
     for (let trip of json) {
@@ -144,12 +145,30 @@ describe.only('getJSON', () => {
     }
   });
 });
-//describe('saveCsvToJson', () => {
+describe('saveCsvToJson', () => {
+  let csvFilePath = '/home/geoff/work/gigMax/tests/mockData/saveCsvToJson/test_statement.csv'
+  const execSync = require('child_process').execSync;
+
+  it('should take a csv file, convert it to json, and write it to disk', () => {
+    let saveLocation = '/home/geoff/work/gigMax/tests/mockData/saveCsvToJson/test_statement.json';
+
+    saveCsvToJson(csvFilePath, saveLocation);
+    let json = getJSON(saveLocation);
+
+    expect(json instanceof Object).to.equal(true);
+    expect(Object.keys(json).length).to.equal(7);
+    expect(json.length).to.equal(7);
+
+    execSync(`rm ${saveLocation}`, { encoding: 'utf-8' });
+
+  });
+});
+//describe('getIncompleteTrips', () => {
 //  it('', () => {
 //  });
 //});
-//describe('getIncompleteTrips', () => {
-//  it('', () => {
+//describe('csvFilePathToJsonFilePath', () => {
+//  it('should take a csv file path and produce a json file path ending in .json', () => {
 //  });
 //});
 //describe('', () => {
