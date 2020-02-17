@@ -4,7 +4,7 @@ const TRIP_HTML_DIR = "/home/geoff/work/gigMax/data/raw/tripHTML/";
 const CSV_DIR = "/home/geoff/work/gigMax/data/raw/statementCSVs/";
 const JSON_STATEMENT_DIR = '/home/geoff/work/gigMax/data/intermediate/statementJSONs/';
 const JSON_PAGE_DATA_DIR = '/home/geoff/work/gigMax/data/intermediate/pageData/';
-const INCOMPLETE_TRIP_IDS = '/home/geoff/work/gigMax/incompleteDataTripIDs.txt';
+const INCOMPLETE_TRIP_IDS = '/home/geoff/work/gigMax/data/incompleteTripIDs.json';
 const JSON_MERGED_DIR = '/home/geoff/work/gigMax/data/final/';
 const INCOMPLETE_TRIP_HTML_FILE = '/home/geoff/work/gigMax/incompleteHTMLDownloads.txt';
 

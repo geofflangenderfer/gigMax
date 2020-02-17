@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const execSync = require('child_process').execSync;
 // refactor to mutate.func_name() to reduce lines used here
 const { 
   getJSON, 
@@ -12,6 +13,7 @@ const {
   getPageDataPathFromTripID,
   stripBom,
   saveCsvToJson,
+  handleFailedScrape,
   extractPageDataSync, 
   csvFilePathToJsonFilePath,
   getIncompleteTrips,
@@ -20,8 +22,11 @@ const {
   getStatementTripIDs,
   CSVsToJSONs,
 } = require('/home/geoff/work/gigMax/src/mutate.ts');
+const { 
+  JSON_STATEMENT_DIR,
+  INCOMPLETE_TRIP_IDS
+} = require('/home/geoff/work/gigMax/src/uriStore.js');
 
-const { JSON_STATEMENT_DIR } = require('/home/geoff/work/gigMax/src/uriStore.js');
 const INIT_TEST_STATEMENT = '/home/geoff/work/gigMax/tests/mockData/merge/initial_statement.json';
 const TEST_STATEMENT_NO_BOM = '/home/geoff/work/gigMax/tests/mockData/merge/expected_statement.json';
 const TEST_ADDL_DATA = '/home/geoff/work/gigMax/tests/mockData/merge/36fafc62-bfed-46db-b4b0-ce3f3fc7427e.json';
@@ -146,8 +151,8 @@ describe('getJSON', () => {
   });
 });
 describe('saveCsvToJson', () => {
+saveCsvToJson
   let csvFilePath = '/home/geoff/work/gigMax/tests/mockData/saveCsvToJson/test_statement.csv'
-  const execSync = require('child_process').execSync;
 
   it('should take a csv file, convert it to json, and write it to disk', () => {
     let saveLocation = '/home/geoff/work/gigMax/tests/mockData/saveCsvToJson/test_statement.json';
@@ -163,21 +168,50 @@ describe('saveCsvToJson', () => {
 
   });
 });
-//describe('getIncompleteTrips', () => {
-//  it('', () => {
+describe.only('handleFailedScrape', () => {
+  let incompleteTripsPath_init = '/home/geoff/work/gigMax/tests/mockData/handleFailedScrape/incompleteTripIDs_init.json';
+  let incompleteTripsPath_actual = '/home/geoff/work/gigMax/tests/mockData/handleFailedScrape/incompleteTripIDs_actual.json';
+  let incompleteTripsPath_expected= '/home/geoff/work/gigMax/tests/mockData/handleFailedScrape/incompleteTripIDs_expected.json';
+  let failedTripPath = '/home/geoff/work/gigMax/data/raw/tripHTML/00a326bd-1806-4292-a8f9-d295ba2bd9b9.html';
+  it('should update the incomplete tripIDs store with new ID', () => {
+    handleFailedScrape(failedTripPath, incompleteTripsPath_actual);
+    //let incompleteTripIDs: object = getJSON(incompleteTripsPath_before);
+    //let failedTripID: string = getIDFromFilePath(failedTripPath);
+    //incompleteTripIDs["tripIDs"].push(failedTripID);
+
+    let actual = getJSON(incompleteTripsPath_actual);
+    let expected = getJSON(incompleteTripsPath_expected);
+
+    expect(actual).to.deep.equal(expected);
+    execSync(`rm ${incompleteTripsPath_actual}`, { encoding: 'utf-8' });
+
+    //extract tripID from failedTripPath
+    //load incompleteTripIDs json
+    //add extracted tripID to incompleteTripIDs object
+    //save updated object to savePath (incompleteTripIDs.json default)
+
+  });
+});
+//describe('handleSuccessfulScrape', () => {
+//  it('should save the extracted data as JSON to page data directory', () => {
 //  });
 //});
 //describe('csvFilePathToJsonFilePath', () => {
 //  it('should take a csv file path and produce a json file path ending in .json', () => {
 //  });
 //});
-//describe('', () => {
-//  it('', () => {
-//  });
-//});
 //describe('isInStatement', () => {
 //  it('should return true if tripID is in statement', () => {
 //  });
 //  it('should return false if tripID is not in statement', () => {
+//  });
+//});
+//describe('getIncompleteTrips', () => {
+//  it('should return a string[] of incomplete tripIDs', () => {
+//    let expected = fs.readFileSync( INCOMPLETE_TRIP_IDS, 'utf8')
+//  });
+//});
+//describe('', () => {
+//  it('', () => {
 //  });
 //});
