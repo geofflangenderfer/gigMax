@@ -14,6 +14,7 @@ const {
   stripBom,
   saveCsvToJson,
   handleFailedScrape,
+  handleSuccessfulScrape,
   extractPageDataSync, 
   csvFilePathToJsonFilePath,
   getIncompleteTrips,
@@ -24,7 +25,8 @@ const {
 } = require('/home/geoff/work/gigMax/src/mutate.ts');
 const { 
   JSON_STATEMENT_DIR,
-  INCOMPLETE_TRIP_IDS
+  INCOMPLETE_TRIP_IDS,
+  JSON_PAGE_DATA_DIR
 } = require('/home/geoff/work/gigMax/src/uriStore.js');
 
 const INIT_TEST_STATEMENT = '/home/geoff/work/gigMax/tests/mockData/merge/initial_statement.json';
@@ -198,10 +200,21 @@ describe('handleFailedScrape', () => {
 
   });
 });
-//describe('handleSuccessfulScrape', () => {
-//  it('should save the extracted data as JSON to page data directory', () => {
-//  });
-//});
+describe.only('handleSuccessfulScrape', () => {
+  it('should take a page data object and save it as JSON in page data directory', () => {
+    //call handleSuccessfulScrape
+    //check that contents of saved json file match expectation
+    let actualFilePath = '/home/geoff/work/gigMax/tests/mockData/handleSuccessfulScrape/00a326bd-1806-4292-a8f9-d295ba2bd9b9.json';
+    let expectedFilePath = '/home/geoff/work/gigMax/tests/mockData/handleSuccessfulScrape/expected.json';
+    let testHtmlPath = '/home/geoff/work/gigMax/tests/mockData/handleSuccessfulScrape/00a326bd-1806-4292-a8f9-d295ba2bd9b9.html';
+    let actualFilePathDir = '/home/geoff/work/gigMax/tests/mockData/handleSuccessfulScrape/';
+    handleSuccessfulScrape(testHtmlPath, actualFilePathDir);
+    let actual: object = getJSON(actualFilePath);
+    let expected: object = getJSON(expectedFilePath);
+    expect(actual).to.deep.equal(expected);
+
+  });
+});
 //describe('csvFilePathToJsonFilePath', () => {
 //  it('should take a csv file path and produce a json file path ending in .json', () => {
 //  });

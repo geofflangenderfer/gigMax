@@ -28,7 +28,8 @@ function extractDownloadedPageData() {
     let pageDataObject: object = extractPageDataSync(path);
     //isFailedScrape(pageDataObject)
     //  ? handleFailedScrape(path)
-    //  : handleSuccessfulScrape(pageDataObject);
+    //  : handleSuccessfulScrape(path);
+    //
   }
 }
 function combineExtractedAndCSVData() {
@@ -58,12 +59,15 @@ function handleFailedScrape(
 
   fs.writeFileSync(savePath, JSON.stringify(incompletes, null, 4));
 }
-//function handleSuccessfulScrape(pageData: object) {
-//      let tripID: string = getIDFromFilePath(path);
-//      let jsonFilePath = `${JSON_PAGE_DATA_DIR}/${tripID}.json`;
-//      fs.writeFileSync(jsonFilePath, JSON.stringify(pageDataObject, null, 4)) 
-//  
-//}
+function handleSuccessfulScrape(
+  path: string,
+  saveDirectory: string = JSON_PAGE_DATA_DIR
+) {
+  let pageData: object = extractPageDataSync(path);
+  let tripID: string = getIDFromFilePath(path);
+  let savePath: string = saveDirectory + `${tripID}.json`;
+  fs.writeFileSync(savePath, JSON.stringify(pageData, null, 4)) 
+}
 function showIncompleteTrips() {
   console.log("Failed to Scrape tripIDs:\n", getIncompleteTrips());
 }
@@ -229,6 +233,7 @@ module.exports = {
   getStatementTripIDs,
   saveCsvToJson,
   csvFilePathToJsonFilePath,
+  handleSuccessfulScrape, 
   handleFailedScrape,
   stripBom,
 };
