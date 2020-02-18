@@ -18,18 +18,17 @@ const {
 const { SELECTORS } = require('./scraper/cssSelectors.js');
 
 (function buildCompleteTripRecord() {
-  //extractDownloadedPageData();
-  //combineExtractedAndCSVData();
+  extractDownloadedPageData();
+  combineExtractedAndCSVData();
   //showIncompleteTrips();
 })();
 function extractDownloadedPageData() {
   let htmlFilePaths: string[] = getFilePathsArray(TRIP_HTML_DIR);
   for (let path of htmlFilePaths) {
     let pageDataObject: object = extractPageDataSync(path);
-    //isFailedScrape(pageDataObject)
-    //  ? handleFailedScrape(path)
-    //  : handleSuccessfulScrape(path);
-    //
+    isFailedScrape(pageDataObject)
+      ? handleFailedScrape(path)
+      : handleSuccessfulScrape(path);
   }
 }
 function combineExtractedAndCSVData() {
@@ -68,12 +67,12 @@ function handleSuccessfulScrape(
   let savePath: string = saveDirectory + `${tripID}.json`;
   fs.writeFileSync(savePath, JSON.stringify(pageData, null, 4)) 
 }
-function showIncompleteTrips() {
-  console.log("Failed to Scrape tripIDs:\n", getIncompleteTrips());
-}
-function getIncompleteTrips() {
-  
-}
+//function showIncompleteTrips() {
+//  console.log("Failed to Scrape tripIDs:\n", getIncompleteTrips());
+//}
+//function getIncompleteTrips() {
+//  
+//}
 function getTripIndex(tripID: string, statement: object[]): number {
   let tripIndex = -1;
   for (let i = 0; i < statement.length ; i++) {
@@ -101,9 +100,9 @@ function getPageDataPathFromTripID(tripID: string, dir: string): string {
   }
   return matchingPath;
 }
-function isInStatement(tripID: string): boolean {
-  return true;
-}
+//function isInStatement(tripID: string): boolean {
+//  return true;
+//}
 function isMatch(tripID: string, pageDataPath: string): boolean {
   let regex = new RegExp(tripID);
   let stringMatch = pageDataPath.match(regex);
@@ -153,7 +152,7 @@ function CSVsToJSONs(): void {
   for (let csvFilePath of csvFilePaths) {
     saveCsvToJson(
       csvFilePath, 
-      csvFilePathToJsonFilePath(csvFilePath)
+      getCsvJsonFilePath(csvFilePath)
     );
   }
 }
@@ -182,10 +181,13 @@ function stripBom(json: object[]): object[] {
   }
   return json;
 }
-function csvFilePathToJsonFilePath(csvFilePath: string): string {
+function getCsvJsonFilePath(
+  csvFilePath: string,
+  saveDirectory: string = JSON_STATEMENT_DIR
+): string {
   let splitPath = csvFilePath.split("/");
   let jsonPart = splitPath[splitPath.length - 1].split(".")[0] + ".json";
-  return path.join(JSON_STATEMENT_DIR, jsonPart); 
+  return path.join(saveDirectory, jsonPart); 
 }
 function getAllTripIDsArray() {
   let statementJSONs = getStatementJSONs();
@@ -228,11 +230,11 @@ module.exports = {
   getTripIndex,
   extractPageDataSync,
   isFailedScrape,
-  getIncompleteTrips,
+  //getIncompleteTrips,
   getIDFromFilePath,
   getStatementTripIDs,
   saveCsvToJson,
-  csvFilePathToJsonFilePath,
+  getCsvJsonFilePath,
   handleSuccessfulScrape, 
   handleFailedScrape,
   stripBom,

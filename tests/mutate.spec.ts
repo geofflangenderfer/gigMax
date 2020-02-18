@@ -16,8 +16,8 @@ const {
   handleFailedScrape,
   handleSuccessfulScrape,
   extractPageDataSync, 
-  csvFilePathToJsonFilePath,
-  getIncompleteTrips,
+  getCsvJsonFilePath,
+  //getIncompleteTrips,
   isFailedScrape, 
   getIDFromFilePath, 
   getStatementTripIDs,
@@ -218,10 +218,18 @@ describe('handleSuccessfulScrape', () => {
 
   });
 });
-//describe('csvFilePathToJsonFilePath', () => {
-//  it('should take a csv file path and produce a json file path ending in .json', () => {
-//  });
-//});
+describe('getCsvJsonFilePath', () => {
+  it('should take a csv file path and return the path to json directory save location', () => {
+    let testCsvPath = '/home/geoff/work/gigMax/tests/mockData/getCsvJsonFilePath/statement_0d8685db-1640-5a11-9691-68b3363cac12_date_12_16_2019.csv';
+    let saveDir = '/home/geoff/work/gigMax/tests/mockData/getCsvJsonFilePath/';
+    let actual: string = getCsvJsonFilePath(
+      testCsvPath,
+      saveDir
+    );
+    let expected: string = testCsvPath.split(".")[0] + ".json";
+    expect(actual).to.equal(expected);
+  });
+});
 //describe('isInStatement', () => {
 //  it('should return true if tripID is in statement', () => {
 //  });
