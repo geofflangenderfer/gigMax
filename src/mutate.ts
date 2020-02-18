@@ -52,8 +52,11 @@ function handleFailedScrape(
   htmlPath: string,
   savePath: string = INCOMPLETE_TRIP_IDS
 ) {
-  
-  fs.writeFileSync(savePath, JSON.stringify({}, null, 4));
+  let tripID: string = getIDFromFilePath(htmlPath);
+  let incompletes: object = getJSON(savePath);
+  incompletes["tripIDs"].push(tripID);
+
+  fs.writeFileSync(savePath, JSON.stringify(incompletes, null, 4));
 }
 //function handleSuccessfulScrape(pageData: object) {
 //      let tripID: string = getIDFromFilePath(path);

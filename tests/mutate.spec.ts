@@ -168,7 +168,7 @@ saveCsvToJson
 
   });
 });
-describe.only('handleFailedScrape', () => {
+describe('handleFailedScrape', () => {
   let incompleteTripsPath_init = '/home/geoff/work/gigMax/tests/mockData/handleFailedScrape/incompleteTripIDs_init.json';
   let incompleteTripsPath_actual = '/home/geoff/work/gigMax/tests/mockData/handleFailedScrape/incompleteTripIDs_actual.json';
   let incompleteTripsPath_expected= '/home/geoff/work/gigMax/tests/mockData/handleFailedScrape/incompleteTripIDs_expected.json';
@@ -183,7 +183,13 @@ describe.only('handleFailedScrape', () => {
     let expected = getJSON(incompleteTripsPath_expected);
 
     expect(actual).to.deep.equal(expected);
+    
+    //teardown
     execSync(`rm ${incompleteTripsPath_actual}`, { encoding: 'utf-8' });
+    fs.writeFileSync(
+      incompleteTripsPath_actual,
+      JSON.stringify({"tripIDs": []}, null, 4)
+    );
 
     //extract tripID from failedTripPath
     //load incompleteTripIDs json
