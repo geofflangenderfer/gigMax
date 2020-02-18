@@ -200,7 +200,7 @@ describe('handleFailedScrape', () => {
 
   });
 });
-describe.only('handleSuccessfulScrape', () => {
+describe('handleSuccessfulScrape', () => {
   it('should take a page data object and save it as JSON in page data directory', () => {
     //call handleSuccessfulScrape
     //check that contents of saved json file match expectation
@@ -208,10 +208,13 @@ describe.only('handleSuccessfulScrape', () => {
     let expectedFilePath = '/home/geoff/work/gigMax/tests/mockData/handleSuccessfulScrape/expected.json';
     let testHtmlPath = '/home/geoff/work/gigMax/tests/mockData/handleSuccessfulScrape/00a326bd-1806-4292-a8f9-d295ba2bd9b9.html';
     let actualFilePathDir = '/home/geoff/work/gigMax/tests/mockData/handleSuccessfulScrape/';
+
     handleSuccessfulScrape(testHtmlPath, actualFilePathDir);
     let actual: object = getJSON(actualFilePath);
     let expected: object = getJSON(expectedFilePath);
     expect(actual).to.deep.equal(expected);
+
+    execSync(`rm ${actualFilePath}`, { encoding: 'utf-8' });
 
   });
 });
