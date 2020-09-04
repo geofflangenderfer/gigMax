@@ -2,7 +2,7 @@
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
     "merge-json": "^0.1.0-b.3",
-    "papaparse": "^5.1.1",
+    "papaparse": "^5.2.0",
     "puppeteer": "^2.0.0"
   },
   "devDependencies": {
