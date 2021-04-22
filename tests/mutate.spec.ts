@@ -22,17 +22,17 @@ const {
   getIDFromFilePath, 
   getStatementTripIDs,
   CSVsToJSONs,
-} = require('/home/geoff/work/gigMax/src/mutate.ts');
+} = require('../src/mutate.ts');
 const { 
   JSON_STATEMENT_DIR,
   INCOMPLETE_TRIP_IDS,
   JSON_PAGE_DATA_DIR
-} = require('/home/geoff/work/gigMax/src/uriStore.js');
+} = require('../src/uriStore.js');
 
-const INIT_TEST_STATEMENT = '/home/geoff/work/gigMax/tests/mockData/merge/initial_statement.json';
-const TEST_STATEMENT_NO_BOM = '/home/geoff/work/gigMax/tests/mockData/merge/expected_statement.json';
-const TEST_ADDL_DATA = '/home/geoff/work/gigMax/tests/mockData/merge/36fafc62-bfed-46db-b4b0-ce3f3fc7427e.json';
-const TEST_STATEMENT_EXPECTED = '/home/geoff/work/gigMax/tests/mockData/merge/mergedTripExpected.js';
+const INIT_TEST_STATEMENT = './mockData/merge/initial_statement.json';
+const TEST_STATEMENT_NO_BOM = './mockData/merge/expected_statement.json';
+const TEST_ADDL_DATA = './mockData/merge/36fafc62-bfed-46db-b4b0-ce3f3fc7427e.json';
+const TEST_STATEMENT_EXPECTED = './mockData/merge/mergedTripExpected.js';
 
 import { expect } from 'chai';
 import 'mocha';
@@ -61,7 +61,7 @@ describe('getTripIndex', () => {
 });
 describe('getPageDataPathFromTripID', () => {
   let tripID = '0f00bace-ca58-4e03-9296-8e07549deb9e';
-  let dir = '/home/geoff/work/gigMax/tests/mockData/pageData/';//'./mockData/pageData/';
+  let dir = './mockData/pageData/';//'./mockData/pageData/';
   it('should return the absolute path from a valid tripID', () => {
     let pageDataPath = getPageDataPathFromTripID(tripID, dir);
     let expectedPath = dir + tripID + '.json';
@@ -90,7 +90,7 @@ describe('isMatch', () => {
   });
 });
 describe('getFilePathsArray', () => {
-  let dir = '/home/geoff/work/gigMax/tests/mockData/pageData';
+  let dir = './mockData/pageData';
   it('should return absolute filepaths with valid input', () => {
     let returnedPaths: string[] = getFilePathsArray(dir)
     for (let filePath of returnedPaths) {
@@ -111,14 +111,14 @@ describe('stripBom', () => {
 });
 describe('extractPageDataSync', () => {
   it('should take .html file path and return json with extracted data', () => {
-    let htmlPath = '/home/geoff/work/gigMax/tests/mockData/extractPageDataSync_mock/00a326bd-1806-4292-a8f9-d295ba2bd9b9.html';
-    let expectedJsonPath = '/home/geoff/work/gigMax/tests/mockData/extractPageDataSync_mock/result.json';
+    let htmlPath = './mockData/extractPageDataSync_mock/00a326bd-1806-4292-a8f9-d295ba2bd9b9.html';
+    let expectedJsonPath = './mockData/extractPageDataSync_mock/result.json';
     expect(extractPageDataSync(htmlPath)).to.deep.equal(getJSON(expectedJsonPath));
   });
 });
 describe('isFailedScrape', () => {
-  let failedJsonPath = '/home/geoff/work/gigMax/tests/mockData/isFailedScrape_mock/failed.json';
-  let successfulJsonPath = '/home/geoff/work/gigMax/tests/mockData/isFailedScrape_mock/successful.json';
+  let failedJsonPath = './mockData/isFailedScrape_mock/failed.json';
+  let successfulJsonPath = './mockData/isFailedScrape_mock/successful.json';
   let failedJson = getJSON(failedJsonPath);
   let successfulJson = getJSON(successfulJsonPath);
 
@@ -130,14 +130,14 @@ describe('isFailedScrape', () => {
   });
 });
 describe('getIDFromFilePath', () => {
-  let htmlPath = '/home/geoff/work/gigMax/tests/mockData/getIDFromFilePath/00a326bd-1806-4292-a8f9-d295ba2bd9b9.html0';
+  let htmlPath = './mockData/getIDFromFilePath/00a326bd-1806-4292-a8f9-d295ba2bd9b9.html0';
   let tripID = '00a326bd-1806-4292-a8f9-d295ba2bd9b9';
   it('should return a tripID associated with a html file path', () => {
     expect(getIDFromFilePath(htmlPath)).to.equal(tripID);
   });
 });
 describe('getStatementTripIDs', () => {
-  let statementPath = '/home/geoff/work/gigMax/tests/mockData/getStatementTripIDs/statement_27858537-a9aa-5346-ae05-5f8e1a9ad6c2_date_10_28_2019.json';
+  let statementPath = './mockData/getStatementTripIDs/statement_27858537-a9aa-5346-ae05-5f8e1a9ad6c2_date_10_28_2019.json';
   const { expectedTripIDs } = require('./mockData/getStatementTripIDs/tripIDs.js');
   it('should return the tripIDs for a given statement json path', () => {
     expect(getStatementTripIDs(statementPath)).to.deep.equal(expectedTripIDs);
@@ -154,10 +154,10 @@ describe('getJSON', () => {
 });
 describe('saveCsvToJson', () => {
 saveCsvToJson
-  let csvFilePath = '/home/geoff/work/gigMax/tests/mockData/saveCsvToJson/test_statement.csv'
+  let csvFilePath = './mockData/saveCsvToJson/test_statement.csv'
 
   it('should take a csv file, convert it to json, and write it to disk', () => {
-    let saveLocation = '/home/geoff/work/gigMax/tests/mockData/saveCsvToJson/test_statement.json';
+    let saveLocation = './mockData/saveCsvToJson/test_statement.json';
 
     saveCsvToJson(csvFilePath, saveLocation);
     let json = getJSON(saveLocation);
@@ -171,9 +171,9 @@ saveCsvToJson
   });
 });
 describe('handleFailedScrape', () => {
-  let incompleteTripsPath_init = '/home/geoff/work/gigMax/tests/mockData/handleFailedScrape/incompleteTripIDs_init.json';
-  let incompleteTripsPath_actual = '/home/geoff/work/gigMax/tests/mockData/handleFailedScrape/incompleteTripIDs_actual.json';
-  let incompleteTripsPath_expected= '/home/geoff/work/gigMax/tests/mockData/handleFailedScrape/incompleteTripIDs_expected.json';
+  let incompleteTripsPath_init = './mockData/handleFailedScrape/incompleteTripIDs_init.json';
+  let incompleteTripsPath_actual = './mockData/handleFailedScrape/incompleteTripIDs_actual.json';
+  let incompleteTripsPath_expected= './mockData/handleFailedScrape/incompleteTripIDs_expected.json';
   let failedTripPath = '/home/geoff/work/gigMax/data/raw/tripHTML/00a326bd-1806-4292-a8f9-d295ba2bd9b9.html';
   it('should update the incomplete tripIDs store with new ID', () => {
     handleFailedScrape(failedTripPath, incompleteTripsPath_actual);
@@ -204,10 +204,10 @@ describe('handleSuccessfulScrape', () => {
   it('should take a page data object and save it as JSON in page data directory', () => {
     //call handleSuccessfulScrape
     //check that contents of saved json file match expectation
-    let actualFilePath = '/home/geoff/work/gigMax/tests/mockData/handleSuccessfulScrape/00a326bd-1806-4292-a8f9-d295ba2bd9b9.json';
-    let expectedFilePath = '/home/geoff/work/gigMax/tests/mockData/handleSuccessfulScrape/expected.json';
-    let testHtmlPath = '/home/geoff/work/gigMax/tests/mockData/handleSuccessfulScrape/00a326bd-1806-4292-a8f9-d295ba2bd9b9.html';
-    let actualFilePathDir = '/home/geoff/work/gigMax/tests/mockData/handleSuccessfulScrape/';
+    let actualFilePath = './mockData/handleSuccessfulScrape/00a326bd-1806-4292-a8f9-d295ba2bd9b9.json';
+    let expectedFilePath = './mockData/handleSuccessfulScrape/expected.json';
+    let testHtmlPath = './mockData/handleSuccessfulScrape/00a326bd-1806-4292-a8f9-d295ba2bd9b9.html';
+    let actualFilePathDir = './mockData/handleSuccessfulScrape/';
 
     handleSuccessfulScrape(testHtmlPath, actualFilePathDir);
     let actual: object = getJSON(actualFilePath);
@@ -220,8 +220,8 @@ describe('handleSuccessfulScrape', () => {
 });
 describe('getCsvJsonFilePath', () => {
   it('should take a csv file path and return the path to json directory save location', () => {
-    let testCsvPath = '/home/geoff/work/gigMax/tests/mockData/getCsvJsonFilePath/statement_0d8685db-1640-5a11-9691-68b3363cac12_date_12_16_2019.csv';
-    let saveDir = '/home/geoff/work/gigMax/tests/mockData/getCsvJsonFilePath/';
+    let testCsvPath = './mockData/getCsvJsonFilePath/statement_0d8685db-1640-5a11-9691-68b3363cac12_date_12_16_2019.csv';
+    let saveDir = './mockData/getCsvJsonFilePath/';
     let actual: string = getCsvJsonFilePath(
       testCsvPath,
       saveDir
