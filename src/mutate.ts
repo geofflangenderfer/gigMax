@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-const cheerio = require('cheerio');
+const cheerio   = require('cheerio');
 const papaParse = require('papaparse');
-const path = require('path');
-const fs = require('fs'); 
+const path      = require('path');
+const fs        = require('fs');
 
 const {
   BASE_TRIP_URL,
@@ -35,14 +35,14 @@ function combineExtractedAndCSVData() {
   CSVsToJSONs();
   let statementFilePaths: string[] = getFilePathsArray(JSON_STATEMENT_DIR);
   for (let statementFilePath of statementFilePaths) {
-    let tripIDs: string[] = getStatementTripIDs(statementFilePath);
+    let tripIDs: string[]   = getStatementTripIDs(statementFilePath);
     let statement: object[] = getJSON(statementFilePath);
     for (let id of tripIDs) {
       // need to find matching trip within statement
       let addlDataPath: string = getPageDataPathFromTripID(id, JSON_PAGE_DATA_DIR);
-      let addlData: object = getJSON(addlDataPath); 
-      let tripIndex: number = getTripIndex(id, statement);
-      statement[tripIndex] = mergeAddlDataIntoTrip(addlData, statement[tripIndex]);
+      let addlData: object     = getJSON(addlDataPath);
+      let tripIndex: number    = getTripIndex(id, statement);
+      statement[tripIndex]     = mergeAddlDataIntoTrip(addlData, statement[tripIndex]);
     }
     let fileName: string = JSON_MERGED_DIR + `${path.basename(statementFilePath)}`;
     fs.writeFileSync(fileName, JSON.stringify(statement, null, 4));
@@ -52,7 +52,7 @@ function handleFailedScrape(
   htmlPath: string,
   savePath: string = INCOMPLETE_TRIP_IDS
 ) {
-  let tripID: string = getIDFromFilePath(htmlPath);
+  let tripID: string      = getIDFromFilePath(htmlPath);
   let incompletes: object = getJSON(savePath);
   incompletes["tripIDs"].push(tripID);
 
@@ -63,7 +63,7 @@ function handleSuccessfulScrape(
   saveDirectory: string = JSON_PAGE_DATA_DIR
 ) {
   let pageData: object = extractPageDataSync(path);
-  let tripID: string = getIDFromFilePath(path);
+  let tripID: string   = getIDFromFilePath(path);
   let savePath: string = saveDirectory + `${tripID}.json`;
   fs.writeFileSync(savePath, JSON.stringify(pageData, null, 4)) 
 }
@@ -186,7 +186,7 @@ function getCsvJsonFilePath(
   saveDirectory: string = JSON_STATEMENT_DIR
 ): string {
   let splitPath = csvFilePath.split("/");
-  let jsonPart = splitPath[splitPath.length - 1].split(".")[0] + ".json";
+  let jsonPart  = splitPath[splitPath.length - 1].split(".")[0] + ".json";
   return path.join(saveDirectory, jsonPart); 
 }
 function getAllTripIDsArray() {
@@ -202,7 +202,7 @@ function getAllTripIDsArray() {
 }
 function getStatementTripIDs(statementPath: string): string[] {
   let statementJSON: object[] = getJSON(statementPath);
-  let tripIDs = [];
+  let tripIDs                 = [];
   for (let trip of statementJSON) {
     tripIDs.push(trip['Trip ID']);
   }
