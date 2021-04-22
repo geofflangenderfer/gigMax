@@ -72,7 +72,7 @@ describe('getPageDataPathFromTripID', () => {
 });
 describe('isMatch', () => {
   let tripID       = '57ced820-2b0b-4d0b-8c2a-e6ac7c0a6301';
-  let pageDataPath = '/home/geoff/work/gigMax/data/intermediate/pageData/57ced820-2b0b-4d0b-8c2a-e6ac7c0a6301.json';
+  let pageDataPath = '../data/intermediate/pageData/57ced820-2b0b-4d0b-8c2a-e6ac7c0a6301.json';
 
   it('should return true when tripID in pageDataPath', () => {
     let check: boolean = isMatch(tripID, pageDataPath); 
@@ -174,7 +174,7 @@ describe('handleFailedScrape', () => {
   let incompleteTripsPath_init     = './mockData/handleFailedScrape/incompleteTripIDs_init.json';
   let incompleteTripsPath_actual   = './mockData/handleFailedScrape/incompleteTripIDs_actual.json';
   let incompleteTripsPath_expected = './mockData/handleFailedScrape/incompleteTripIDs_expected.json';
-  let failedTripPath               = '/home/geoff/work/gigMax/data/raw/tripHTML/00a326bd-1806-4292-a8f9-d295ba2bd9b9.html';
+  let failedTripPath               = '../data/raw/tripHTML/00a326bd-1806-4292-a8f9-d295ba2bd9b9.html';
   it('should update the incomplete tripIDs store with new ID', () => {
     handleFailedScrape(failedTripPath, incompleteTripsPath_actual);
     //let incompleteTripIDs: object = getJSON(incompleteTripsPath_before);
