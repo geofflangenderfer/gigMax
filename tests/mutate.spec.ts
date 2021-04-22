@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
+const fs       = require('fs');
+const path     = require('path');
 const execSync = require('child_process').execSync;
 // refactor to mutate.func_name() to reduce lines used here
 const { 
@@ -29,9 +29,9 @@ const {
   JSON_PAGE_DATA_DIR
 } = require('../src/uriStore.js');
 
-const INIT_TEST_STATEMENT = './mockData/merge/initial_statement.json';
-const TEST_STATEMENT_NO_BOM = './mockData/merge/expected_statement.json';
-const TEST_ADDL_DATA = './mockData/merge/36fafc62-bfed-46db-b4b0-ce3f3fc7427e.json';
+const INIT_TEST_STATEMENT     = './mockData/merge/initial_statement.json';
+const TEST_STATEMENT_NO_BOM   = './mockData/merge/expected_statement.json';
+const TEST_ADDL_DATA          = './mockData/merge/36fafc62-bfed-46db-b4b0-ce3f3fc7427e.json';
 const TEST_STATEMENT_EXPECTED = './mockData/merge/mergedTripExpected.js';
 
 import { expect } from 'chai';
@@ -39,29 +39,29 @@ import 'mocha';
 
 describe('mergeAddlDataIntoTrip', () => {
   it('should add additional fields to a trip object', () => {
-    let statement: object[] = stripBom(getJSON( INIT_TEST_STATEMENT ));
-    let tripID = '36fafc62-bfed-46db-b4b0-ce3f3fc7427e';
-    let tripIndex: number = getTripIndex(tripID, statement);
-    let addlData: object = getJSON(TEST_ADDL_DATA);
+    let statement: object[]    = stripBom(getJSON( INIT_TEST_STATEMENT ));
+    let tripID                 = '36fafc62-bfed-46db-b4b0-ce3f3fc7427e';
+    let tripIndex: number      = getTripIndex(tripID, statement);
+    let addlData: object       = getJSON(TEST_ADDL_DATA);
     let { mergedTripExpected } = require(TEST_STATEMENT_EXPECTED);
 
-    let mergedTripActual = mergeAddlDataIntoTrip(addlData, statement[tripIndex]);
+    let mergedTripActual       = mergeAddlDataIntoTrip(addlData, statement[tripIndex]);
     expect(mergedTripActual).to.deep.equal(mergedTripExpected);
   });
 });
 
 describe('getTripIndex', () => {
   let statement: object[] = getJSON(INIT_TEST_STATEMENT);
-  let tripID = '36fafc62-bfed-46db-b4b0-ce3f3fc7427e';
+  let tripID              = '36fafc62-bfed-46db-b4b0-ce3f3fc7427e';
   it('should return the array index for the associated trip id', () => {
     let expected = 0;
-    let actual = getTripIndex(tripID, statement);
+    let actual   = getTripIndex(tripID, statement);
     expect(actual).to.equal(expected);
   });
 });
 describe('getPageDataPathFromTripID', () => {
   let tripID = '0f00bace-ca58-4e03-9296-8e07549deb9e';
-  let dir = './mockData/pageData/';//'./mockData/pageData/';
+  let dir    = './mockData/pageData/';//'./mockData/pageData/';
   it('should return the absolute path from a valid tripID', () => {
     let pageDataPath = getPageDataPathFromTripID(tripID, dir);
     let expectedPath = dir + tripID + '.json';
@@ -71,7 +71,7 @@ describe('getPageDataPathFromTripID', () => {
   //});
 });
 describe('isMatch', () => {
-  let tripID = '57ced820-2b0b-4d0b-8c2a-e6ac7c0a6301';
+  let tripID       = '57ced820-2b0b-4d0b-8c2a-e6ac7c0a6301';
   let pageDataPath = '/home/geoff/work/gigMax/data/intermediate/pageData/57ced820-2b0b-4d0b-8c2a-e6ac7c0a6301.json';
 
   it('should return true when tripID in pageDataPath', () => {
@@ -80,12 +80,12 @@ describe('isMatch', () => {
   });
   it('should return false when pageDataPath tripID != tripID', () => {
     let differentTripID = '36fafc62-bfed-46db-b4b0-ce3f3fc7427e.json';
-    let check: boolean = isMatch(differentTripID, pageDataPath); 
+    let check: boolean  = isMatch(differentTripID, pageDataPath);
     expect(check).to.equal(false);
   });
   it('should return false when tripID equals ""', () => {
-    let emptyTripID = '';
-    let check: boolean = isMatch(emptyTripID, pageDataPath); 
+    let emptyTripID    = '';
+    let check: boolean = isMatch(emptyTripID, pageDataPath);
     expect(check).to.equal(false);
   });
 });
@@ -111,16 +111,16 @@ describe('stripBom', () => {
 });
 describe('extractPageDataSync', () => {
   it('should take .html file path and return json with extracted data', () => {
-    let htmlPath = './mockData/extractPageDataSync_mock/00a326bd-1806-4292-a8f9-d295ba2bd9b9.html';
+    let htmlPath         = './mockData/extractPageDataSync_mock/00a326bd-1806-4292-a8f9-d295ba2bd9b9.html';
     let expectedJsonPath = './mockData/extractPageDataSync_mock/result.json';
     expect(extractPageDataSync(htmlPath)).to.deep.equal(getJSON(expectedJsonPath));
   });
 });
 describe('isFailedScrape', () => {
-  let failedJsonPath = './mockData/isFailedScrape_mock/failed.json';
+  let failedJsonPath     = './mockData/isFailedScrape_mock/failed.json';
   let successfulJsonPath = './mockData/isFailedScrape_mock/successful.json';
-  let failedJson = getJSON(failedJsonPath);
-  let successfulJson = getJSON(successfulJsonPath);
+  let failedJson         = getJSON(failedJsonPath);
+  let successfulJson     = getJSON(successfulJsonPath);
 
   it("should identify successful scrape", () => {
     expect(isFailedScrape(successfulJson)).to.equal(false);
@@ -131,13 +131,13 @@ describe('isFailedScrape', () => {
 });
 describe('getIDFromFilePath', () => {
   let htmlPath = './mockData/getIDFromFilePath/00a326bd-1806-4292-a8f9-d295ba2bd9b9.html0';
-  let tripID = '00a326bd-1806-4292-a8f9-d295ba2bd9b9';
+  let tripID   = '00a326bd-1806-4292-a8f9-d295ba2bd9b9';
   it('should return a tripID associated with a html file path', () => {
     expect(getIDFromFilePath(htmlPath)).to.equal(tripID);
   });
 });
 describe('getStatementTripIDs', () => {
-  let statementPath = './mockData/getStatementTripIDs/statement_27858537-a9aa-5346-ae05-5f8e1a9ad6c2_date_10_28_2019.json';
+  let statementPath         = './mockData/getStatementTripIDs/statement_27858537-a9aa-5346-ae05-5f8e1a9ad6c2_date_10_28_2019.json';
   const { expectedTripIDs } = require('./mockData/getStatementTripIDs/tripIDs.js');
   it('should return the tripIDs for a given statement json path', () => {
     expect(getStatementTripIDs(statementPath)).to.deep.equal(expectedTripIDs);
@@ -160,7 +160,7 @@ saveCsvToJson
     let saveLocation = './mockData/saveCsvToJson/test_statement.json';
 
     saveCsvToJson(csvFilePath, saveLocation);
-    let json = getJSON(saveLocation);
+    let json         = getJSON(saveLocation);
 
     expect(json instanceof Object).to.equal(true);
     expect(Object.keys(json).length).to.equal(7);
@@ -171,17 +171,17 @@ saveCsvToJson
   });
 });
 describe('handleFailedScrape', () => {
-  let incompleteTripsPath_init = './mockData/handleFailedScrape/incompleteTripIDs_init.json';
-  let incompleteTripsPath_actual = './mockData/handleFailedScrape/incompleteTripIDs_actual.json';
-  let incompleteTripsPath_expected= './mockData/handleFailedScrape/incompleteTripIDs_expected.json';
-  let failedTripPath = '/home/geoff/work/gigMax/data/raw/tripHTML/00a326bd-1806-4292-a8f9-d295ba2bd9b9.html';
+  let incompleteTripsPath_init     = './mockData/handleFailedScrape/incompleteTripIDs_init.json';
+  let incompleteTripsPath_actual   = './mockData/handleFailedScrape/incompleteTripIDs_actual.json';
+  let incompleteTripsPath_expected = './mockData/handleFailedScrape/incompleteTripIDs_expected.json';
+  let failedTripPath               = '/home/geoff/work/gigMax/data/raw/tripHTML/00a326bd-1806-4292-a8f9-d295ba2bd9b9.html';
   it('should update the incomplete tripIDs store with new ID', () => {
     handleFailedScrape(failedTripPath, incompleteTripsPath_actual);
     //let incompleteTripIDs: object = getJSON(incompleteTripsPath_before);
     //let failedTripID: string = getIDFromFilePath(failedTripPath);
     //incompleteTripIDs["tripIDs"].push(failedTripID);
 
-    let actual = getJSON(incompleteTripsPath_actual);
+    let actual   = getJSON(incompleteTripsPath_actual);
     let expected = getJSON(incompleteTripsPath_expected);
 
     expect(actual).to.deep.equal(expected);
@@ -204,14 +204,14 @@ describe('handleSuccessfulScrape', () => {
   it('should take a page data object and save it as JSON in page data directory', () => {
     //call handleSuccessfulScrape
     //check that contents of saved json file match expectation
-    let actualFilePath = './mockData/handleSuccessfulScrape/00a326bd-1806-4292-a8f9-d295ba2bd9b9.json';
-    let expectedFilePath = './mockData/handleSuccessfulScrape/expected.json';
-    let testHtmlPath = './mockData/handleSuccessfulScrape/00a326bd-1806-4292-a8f9-d295ba2bd9b9.html';
+    let actualFilePath    = './mockData/handleSuccessfulScrape/00a326bd-1806-4292-a8f9-d295ba2bd9b9.json';
+    let expectedFilePath  = './mockData/handleSuccessfulScrape/expected.json';
+    let testHtmlPath      = './mockData/handleSuccessfulScrape/00a326bd-1806-4292-a8f9-d295ba2bd9b9.html';
     let actualFilePathDir = './mockData/handleSuccessfulScrape/';
 
     handleSuccessfulScrape(testHtmlPath, actualFilePathDir);
-    let actual: object = getJSON(actualFilePath);
-    let expected: object = getJSON(expectedFilePath);
+    let actual: object    = getJSON(actualFilePath);
+    let expected: object  = getJSON(expectedFilePath);
     expect(actual).to.deep.equal(expected);
 
     execSync(`rm ${actualFilePath}`, { encoding: 'utf-8' });
@@ -220,9 +220,9 @@ describe('handleSuccessfulScrape', () => {
 });
 describe('getCsvJsonFilePath', () => {
   it('should take a csv file path and return the path to json directory save location', () => {
-    let testCsvPath = './mockData/getCsvJsonFilePath/statement_0d8685db-1640-5a11-9691-68b3363cac12_date_12_16_2019.csv';
-    let saveDir = './mockData/getCsvJsonFilePath/';
-    let actual: string = getCsvJsonFilePath(
+    let testCsvPath      = './mockData/getCsvJsonFilePath/statement_0d8685db-1640-5a11-9691-68b3363cac12_date_12_16_2019.csv';
+    let saveDir          = './mockData/getCsvJsonFilePath/';
+    let actual: string   = getCsvJsonFilePath(
       testCsvPath,
       saveDir
     );
