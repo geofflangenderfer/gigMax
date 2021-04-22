@@ -90,8 +90,8 @@ function mergeAddlDataIntoTrip(addlData: object, parentTrip: object ): object {
   return parentTrip;
 }
 function getPageDataPathFromTripID(tripID: string, dir: string): string {
-  let pageDataPaths = getFilePathsArray(dir); 
-  let matchingPath = '';
+  let pageDataPaths = getFilePathsArray(dir);
+  let matchingPath  = '';
   for (let pageDataPath of pageDataPaths) {
     if (isMatch(tripID, pageDataPath)) {
       matchingPath = pageDataPath;
@@ -104,7 +104,7 @@ function getPageDataPathFromTripID(tripID: string, dir: string): string {
 //  return true;
 //}
 function isMatch(tripID: string, pageDataPath: string): boolean {
-  let regex = new RegExp(tripID);
+  let regex       = new RegExp(tripID);
   let stringMatch = pageDataPath.match(regex);
   return stringMatch != null && stringMatch[0] != '';
 }
@@ -126,7 +126,7 @@ function extractPageDataSync(filePath: string): object {
   return json;
 }
 function isFailedScrape(json: object): boolean  {
-  let keysCondition: boolean = Object.keys(json).length === 7;
+  let keysCondition: boolean   = Object.keys(json).length === 7;
   let valuesCondition: boolean = Object.values(json)
     .filter(value => value === '')
     .length == 7;
@@ -142,7 +142,7 @@ function extractPageDataWithSelector(html: string, selectors: string[]): string 
   return data;
 }
 function getIDFromFilePath(filePath: string): string {
-  let bySlash = filePath.split('/');
+  let bySlash  = filePath.split('/');
   let byPeriod = bySlash[bySlash.length-1].split('.')[0];
   return byPeriod;
 }
@@ -191,7 +191,7 @@ function getCsvJsonFilePath(
 }
 function getAllTripIDsArray() {
   let statementJSONs = getStatementJSONs();
-  let tripIDs = [];
+  let tripIDs        = [];
   // for some reason the first element is an empty array, so we skip
   for (let i = 1; i < statementJSONs.length; i++) {
     for (let trip of statementJSONs[i]) {
